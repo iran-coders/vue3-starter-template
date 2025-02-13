@@ -1,12 +1,12 @@
-import CrudService from './crud.service';
+import CrudRepository from './crud.repository';
 
-class UserService extends CrudService {
+class UserRepository extends CrudRepository {
     /**
-     * Service url
+     * Repository url
      *
      * @returns {String}
      */
-    static get URL() {
+    get URL() {
         return 'users';
     }
 
@@ -15,7 +15,7 @@ class UserService extends CrudService {
      *
      * @returns {Object}
      */
-    static getDefault() {
+    getDefault() {
         return {
             id: undefined,
             name: undefined,
@@ -42,4 +42,4 @@ class UserService extends CrudService {
     }
 }
 
-export default UserService;
+export default new UserRepository();

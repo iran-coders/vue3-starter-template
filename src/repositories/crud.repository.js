@@ -1,26 +1,15 @@
-import ApiService from './api.service';
+import ApiRepository from './api.repository';
+import BaseRepository from './base.repository';
 
-class CrudService {
-    /**
-     * Service url
-     *
-     * @throws {Error}
-     * @returns {String}
-     */
-    static get URL() {
-        throw new Error(
-            'You have to implement the static method "URL", for each class that extend CrudServices!'
-        );
-    }
-
+class CrudRepository extends BaseRepository {
     /**
      * Get items
      *
      * @param {AxiosRequestConfig} [config]
      * @returns {Promise<AxiosResponse>}
      */
-    static getAll(config) {
-        return ApiService.get(this.URL, config);
+    getAll(config) {
+        return ApiRepository.get(this.URL, config);
     }
 
     /**
@@ -30,8 +19,8 @@ class CrudService {
      * @param {AxiosRequestConfig} [config]
      * @returns {Promise<AxiosResponse>}
      */
-    static getOneById(id, config) {
-        return ApiService.get(`${this.URL}/${id}`, config);
+    getOneById(id, config) {
+        return ApiRepository.get(`${this.URL}/${id}`, config);
     }
 
     /**
@@ -41,8 +30,8 @@ class CrudService {
      * @param {AxiosRequestConfig} [config]
      * @returns {Promise<AxiosResponse>}
      */
-    static create(data, config) {
-        return ApiService.post(`${this.URL}/create`, data, config);
+    create(data, config) {
+        return ApiRepository.post(`${this.URL}/create`, data, config);
     }
 
     /**
@@ -53,8 +42,8 @@ class CrudService {
      * @param {AxiosRequestConfig} [config]
      * @returns {Promise<AxiosResponse>}
      */
-    static update(id, data, config) {
-        return ApiService.post(`${this.URL}/${id}/update`, data, config);
+    update(id, data, config) {
+        return ApiRepository.post(`${this.URL}/${id}/update`, data, config);
     }
 
     /**
@@ -65,9 +54,9 @@ class CrudService {
      * @param {AxiosRequestConfig} [config]
      * @returns {Promise<AxiosResponse>}
      */
-    static delete(id, data, config) {
-        return ApiService.post(`${this.URL}/${id}/delete`, data, config);
+    delete(id, data, config) {
+        return ApiRepository.post(`${this.URL}/${id}/delete`, data, config);
     }
 }
 
-export default CrudService;
+export default CrudRepository;

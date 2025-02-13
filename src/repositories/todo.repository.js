@@ -1,12 +1,12 @@
-import CrudService from './crud.service';
+import CrudRepository from './crud.repository';
 
-class TodoService extends CrudService {
+class TodoRepository extends CrudRepository {
     /**
-     * Service url
+     * Repository url
      *
      * @returns {String}
      */
-    static get URL() {
+    get URL() {
         return 'todos';
     }
 
@@ -15,7 +15,7 @@ class TodoService extends CrudService {
      *
      * @returns {Object}
      */
-    static getDefault() {
+    getDefault() {
         return {
             userId: undefined,
             id: undefined,
@@ -25,4 +25,4 @@ class TodoService extends CrudService {
     }
 }
 
-export default TodoService;
+export default new TodoRepository();

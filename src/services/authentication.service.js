@@ -1,4 +1,5 @@
-import ApiService from './api.service';
+import ApiRepository from '@/repositories/api.repository';
+
 import TokenService from './token.service';
 import PermissionService from './permission.service';
 
@@ -14,12 +15,12 @@ class AuthenticationService {
      * @returns {Promise<AxiosResponse>}
      */
     static login(data, config) {
-        return ApiService.post('users', data, config).then((response) => {
+        return ApiRepository.post('users', data, config).then((response) => {
             const token = btoa(JSON.stringify(response.data));
 
             TokenService.set(token);
             PermissionService.set(['dashboard']);
-            ApiService.setHeader(HttpHeader.AUTHORIZATION, `Bearer ${TokenService.get()}`);
+            ApiRepository.setHeader(HttpHeader.AUTHORIZATION, `Bearer ${TokenService.get()}`);
 
             return response;
         });

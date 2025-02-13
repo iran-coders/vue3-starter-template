@@ -1,6 +1,6 @@
 import AuthenticationService from '@/services/authentication.service';
-import router from '@/router/index';
 
+import router from '@/router/index';
 import HttpStatusCode from '@/enums/HttpStatusCode';
 
 /**
