@@ -1,4 +1,4 @@
-class StorageService {
+class LocalStorageService {
     /**
      * Set an item
      *
@@ -6,7 +6,7 @@ class StorageService {
      * @param {*} value
      * @returns void
      */
-    static set(name, value) {
+    set(name, value) {
         const stringifyValue = JSON.stringify(value);
         localStorage.setItem(name, stringifyValue);
     }
@@ -17,7 +17,7 @@ class StorageService {
      * @param {String} name
      * @returns {*}
      */
-    static get(name) {
+    get(name) {
         const value = localStorage.getItem(name);
         return value ? JSON.parse(value) : undefined;
     }
@@ -28,7 +28,7 @@ class StorageService {
      * @param {String} name
      * @returns void
      */
-    static delete(name) {
+    delete(name) {
         localStorage.removeItem(name);
     }
 
@@ -38,9 +38,9 @@ class StorageService {
      * @param {String} name
      * @returns {Boolean}
      */
-    static has(name) {
+    has(name) {
         return Boolean(this.get(name));
     }
 }
 
-export default StorageService;
+export default new LocalStorageService();
