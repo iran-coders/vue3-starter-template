@@ -5,7 +5,7 @@ import LocalStorageService from '@/services/local-storage.service';
 
 class NetworkFirstStrategy extends BaseStrategy {
     /**
-     * Cache time-to-live (in milliseconds)
+     * Cache time-to-live (milliseconds)
      *
      * @type {Number}
      * @private
@@ -19,12 +19,17 @@ class NetworkFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Stores a new value in the cache.
+     * Store a value in cache
      *
      * @param {String} key
      * @param {*} value
+     * @returns void
      */
     put(key, value) {
+        if (value === undefined) {
+            return;
+        }
+
         this._cache[key] = {
             value,
             expire_at: Date.now() + this._ttl
@@ -34,13 +39,17 @@ class NetworkFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Attempts to fetch data from the network first, falling back to cache if network fails.
+     * Tries network first, falls back to cache if failed.
      *
      * @param {String} key
      * @param {Function} callback
      * @returns {Promise<*>}
      */
     get(key, callback) {
+        if (typeof callback !== 'function') {
+            return Promise.reject(new Error('Callback must be a function'));
+        }
+
         const data = this._cache[key];
 
         return new Promise((resolve, reject) => {
@@ -55,37 +64,42 @@ class NetworkFirstStrategy extends BaseStrategy {
                         resolve(value);
                     } else {
                         this.delete(key);
-                        reject(reason);
                     }
-                } else {
-                    reject(reason);
                 }
+
+                reject(reason);
             });
         });
     }
 
     /**
-     * Checks if a specific value exists in the cache.
+     * Check if a valid value exists in cache
      *
      * @param {String} key
      * @returns {Boolean}
      */
     has(key) {
-        return Boolean(this._cache[key]);
+        const data = this._cache[key];
+        return data !== undefined && Date.now() < data.expire_at;
     }
 
     /**
-     * Deletes a specific value from the cache.
+     * Remove a value from cache
      *
      * @param {String} key
+     * @returns void
      */
     delete(key) {
-        delete this._cache[key];
-        this._setCache();
+        if (this._cache[key]) {
+            delete this._cache[key];
+            this._setCache();
+        }
     }
 
     /**
-     * Clears all values from the cache.
+     * Clear all cached data
+     *
+     * @returns void
      */
     clear() {
         this._cache = {};
