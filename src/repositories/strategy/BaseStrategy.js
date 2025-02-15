@@ -1,9 +1,6 @@
 // Utils
 import { isEmptyObject } from '@/utils';
 
-// Services
-import LocalStorageService from '@/services/local-storage.service';
-
 class BaseStrategy {
     /**
      * @type {Object}
@@ -23,7 +20,7 @@ class BaseStrategy {
      */
     _driver;
 
-    constructor(cacheTag = 'global', driver = LocalStorageService) {
+    constructor(cacheTag, driver) {
         this._cacheTag = cacheTag;
         this._driver = driver;
 

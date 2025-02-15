@@ -1,5 +1,8 @@
 import BaseStrategy from './BaseStrategy';
 
+// Services
+import LocalStorageService from '@/services/local-storage.service';
+
 class CacheFirstStrategy extends BaseStrategy {
     /**
      * Cache time-to-live (in milliseconds)
@@ -9,7 +12,7 @@ class CacheFirstStrategy extends BaseStrategy {
      */
     _ttl;
 
-    constructor(cacheTag, driver, ttl = 60_000) {
+    constructor(cacheTag = 'global', driver = LocalStorageService, ttl = 60_000) {
         super(cacheTag, driver);
 
         this._ttl = ttl;
