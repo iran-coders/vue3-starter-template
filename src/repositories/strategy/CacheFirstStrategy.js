@@ -5,7 +5,7 @@ import LocalStorageService from '@/services/local-storage.service';
 
 class CacheFirstStrategy extends BaseStrategy {
     /**
-     * Cache time-to-live (in milliseconds)
+     * Cache time-to-live (milliseconds)
      *
      * @type {Number}
      * @private
@@ -19,12 +19,17 @@ class CacheFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Stores a new value in the cache.
+     * Store a value in cache
      *
      * @param {String} key
      * @param {*} value
+     * @returns void
      */
     put(key, value) {
+        if (value === undefined) {
+            return;
+        }
+
         this._cache[key] = {
             value,
             expire_at: Date.now() + this._ttl
@@ -34,7 +39,7 @@ class CacheFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Retrieves the stored value or fetches a new value using the callback.
+     * Retrieve value from cache or fetch new data
      *
      * @param {String} key
      * @param {Function} callback
@@ -53,6 +58,10 @@ class CacheFirstStrategy extends BaseStrategy {
             }
         }
 
+        if (typeof callback !== 'function') {
+            return Promise.reject(new Error('Callback must be a function'));
+        }
+
         return new Promise((resolve, reject) => {
             callback().then((response) => {
                 this.put(key, response);
@@ -62,27 +71,33 @@ class CacheFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Checks if a specific value exists in the cache.
+     * Check if a valid value exists in cache
      *
      * @param {String} key
      * @returns {Boolean}
      */
     has(key) {
-        return Boolean(this._cache[key]);
+        const data = this._cache[key];
+        return data !== undefined && Date.now() < data.expire_at;
     }
 
     /**
-     * Deletes a specific value from the cache.
+     * Remove a value from cache
      *
      * @param {String} key
+     * @returns void
      */
     delete(key) {
-        delete this._cache[key];
-        this._setCache();
+        if (this._cache[key]) {
+            delete this._cache[key];
+            this._setCache();
+        }
     }
 
     /**
-     * Clears all values from the cache.
+     * Clear all cached data
+     *
+     * @returns void
      */
     clear() {
         this._cache = {};
