@@ -27,8 +27,10 @@ class BaseStrategy {
         this._cache = this._getCache() ?? {};
     }
 
+    // Private
+
     /**
-     * Retrieves cache from the storage driver.
+     * Get cache by tag
      *
      * @private
      * @returns {Object|null}
@@ -38,9 +40,10 @@ class BaseStrategy {
     }
 
     /**
-     * Updates the cache in storage. If cache is empty, it clears storage.
+     * Set cache by tag
      *
      * @private
+     * @returns void
      */
     _setCache() {
         if (isEmptyObject(this._cache)) {
@@ -52,9 +55,10 @@ class BaseStrategy {
     }
 
     /**
-     * Clears the cache from storage.
+     * Clear cache by tag
      *
      * @private
+     * @returns void
      */
     _clearCache() {
         this._driver.delete(this._cacheTag);
