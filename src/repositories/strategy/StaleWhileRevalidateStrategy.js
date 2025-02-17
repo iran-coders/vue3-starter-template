@@ -1,36 +1,34 @@
 import BaseStrategy from './BaseStrategy';
 
-// Services
-import LocalStorageService from '@/services/local-storage.service';
-
 class StaleWhileRevalidateStrategy extends BaseStrategy {
     /**
-     * Cache time-to-live (in milliseconds)
-     *
-     * @type {Number}
-     * @private
+     * @param {Object} config
+     * @param {Number} [config.ttl]
+     * @param {Object} [config.driver]
+     * @param {String} [config.cacheTag]
      */
-    _ttl;
-
-    constructor(cacheTag = 'global', driver = LocalStorageService, ttl = 60_000) {
-        super(cacheTag, driver);
-
-        this._ttl = ttl;
+    constructor(config) {
+        super(config);
     }
 
     /**
-     * Stores a new value in the cache.
+     * Store a value by cache key
      *
      * @param {String} key
      * @param {*} value
+     * @return void
      */
     put(key, value) {
+        if (value === null || value === undefined) {
+            return;
+        }
+
         this._cache[key] = {
             value,
             expire_at: Date.now() + this._ttl
         };
 
-        this._setCache();
+        this._saveCache();
     }
 
     /**
@@ -38,23 +36,26 @@ class StaleWhileRevalidateStrategy extends BaseStrategy {
      *
      * @param {String} key
      * @param {Function} callback
-     * @returns {Promise<*>}
+     * @return {Promise<*>}
      */
     get(key, callback) {
-        const data = this._cache[key];
-
-        if (data !== undefined) {
-            const { value, expire_at } = data;
-
-            if (Date.now() < expire_at) {
-                callback().then((response) => this.put(key, response));
-                return Promise.resolve(value);
-            } else {
-                this.delete(key);
-            }
-        }
-
         return new Promise((resolve, reject) => {
+            if (this.has(key)) {
+                callback().then((response) => {
+                    this.put(key, response);
+                });
+
+                resolve(this._cache[key].value);
+                return;
+            }
+
+            this.delete(key);
+
+            if (typeof callback !== 'function') {
+                reject(new Error('Callback must be a function'));
+                return;
+            }
+
             callback().then((response) => {
                 this.put(key, response);
                 resolve(response);
@@ -63,27 +64,33 @@ class StaleWhileRevalidateStrategy extends BaseStrategy {
     }
 
     /**
-     * Checks if a specific value exists in the cache.
+     * Check if a valid value exists by cache key
      *
      * @param {String} key
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     has(key) {
-        return Boolean(this._cache[key]);
+        const data = this._cache[key];
+        return data !== undefined && Date.now() < data.expire_at;
     }
 
     /**
-     * Deletes a specific value from the cache.
+     * Remove a value by cache key
      *
      * @param {String} key
+     * @return void
      */
     delete(key) {
-        delete this._cache[key];
-        this._setCache();
+        if (this._cache[key]) {
+            delete this._cache[key];
+            this._saveCache();
+        }
     }
 
     /**
-     * Clears all values from the cache.
+     * Clear all cached data by tag
+     *
+     * @return void
      */
     clear() {
         this._cache = {};

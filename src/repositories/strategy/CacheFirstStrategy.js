@@ -1,32 +1,25 @@
 import BaseStrategy from './BaseStrategy';
 
-// Services
-import LocalStorageService from '@/services/local-storage.service';
-
 class CacheFirstStrategy extends BaseStrategy {
     /**
-     * Cache time-to-live (milliseconds)
-     *
-     * @type {Number}
-     * @private
+     * @param {Object} config
+     * @param {Number} [config.ttl]
+     * @param {Object} [config.driver]
+     * @param {String} [config.cacheTag]
      */
-    _ttl;
-
-    constructor(cacheTag = 'global', driver = LocalStorageService, ttl = 60_000) {
-        super(cacheTag, driver);
-
-        this._ttl = ttl;
+    constructor(config) {
+        super(config);
     }
 
     /**
-     * Store a value in cache
+     * Store a value by cache key
      *
      * @param {String} key
      * @param {*} value
-     * @returns void
+     * @return void
      */
     put(key, value) {
-        if (value === undefined) {
+        if (value === null || value === undefined) {
             return;
         }
 
@@ -35,34 +28,30 @@ class CacheFirstStrategy extends BaseStrategy {
             expire_at: Date.now() + this._ttl
         };
 
-        this._setCache();
+        this._saveCache();
     }
 
     /**
-     * Retrieve value from cache or fetch new data
+     * Retrieve value from cache by cache key or fetch new data
      *
      * @param {String} key
      * @param {Function} callback
-     * @returns {Promise<*>}
+     * @return {Promise<*>}
      */
     get(key, callback) {
-        const data = this._cache[key];
-
-        if (data !== undefined) {
-            const { value, expire_at } = data;
-
-            if (Date.now() < expire_at) {
-                return Promise.resolve(value);
-            } else {
-                this.delete(key);
-            }
-        }
-
-        if (typeof callback !== 'function') {
-            return Promise.reject(new Error('Callback must be a function'));
-        }
-
         return new Promise((resolve, reject) => {
+            if (this.has(key)) {
+                resolve(this._cache[key].value);
+                return;
+            }
+
+            this.delete(key);
+
+            if (typeof callback !== 'function') {
+                reject(new Error('Callback must be a function'));
+                return;
+            }
+
             callback().then((response) => {
                 this.put(key, response);
                 resolve(response);
@@ -71,10 +60,10 @@ class CacheFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Check if a valid value exists in cache
+     * Check if a valid value exists by cache key
      *
      * @param {String} key
-     * @returns {Boolean}
+     * @return {Boolean}
      */
     has(key) {
         const data = this._cache[key];
@@ -82,22 +71,22 @@ class CacheFirstStrategy extends BaseStrategy {
     }
 
     /**
-     * Remove a value from cache
+     * Remove a value by cache key
      *
      * @param {String} key
-     * @returns void
+     * @return void
      */
     delete(key) {
         if (this._cache[key]) {
             delete this._cache[key];
-            this._setCache();
+            this._saveCache();
         }
     }
 
     /**
-     * Clear all cached data
+     * Clear all cached data by tag
      *
-     * @returns void
+     * @return void
      */
     clear() {
         this._cache = {};
