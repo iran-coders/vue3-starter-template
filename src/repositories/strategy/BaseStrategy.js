@@ -1,6 +1,15 @@
 // Utils
 import { isEmptyObject } from '@/utils';
 
+// Services
+import LocalStorageService from '@/services/local-storage.service';
+
+const Default = {
+    ttl: 60_000,
+    driver: LocalStorageService,
+    cacheTag: 'global'
+};
+
 class BaseStrategy {
     /**
      * @type {Object}
@@ -9,10 +18,10 @@ class BaseStrategy {
     _cache;
 
     /**
-     * @type {String}
+     * @type {Number}
      * @private
      */
-    _cacheTag;
+    _ttl;
 
     /**
      * @type {Object}
@@ -20,32 +29,51 @@ class BaseStrategy {
      */
     _driver;
 
-    constructor(cacheTag, driver) {
-        this._cacheTag = cacheTag;
-        this._driver = driver;
+    /**
+     * @type {String}
+     * @private
+     */
+    _cacheTag;
 
-        this._cache = this._getCache() ?? {};
+    /**
+     * @param {Object} config
+     * @param {Number} [config.ttl]
+     * @param {Object} [config.driver]
+     * @param {String} [config.cacheTag]
+     */
+    constructor(config) {
+        // Todo => checking the type of configurations
+        const { ttl, driver, cacheTag } = {
+            ...Default,
+            ...(typeof config === 'object' ? config : {})
+        };
+
+        this._ttl = ttl;
+        this._driver = driver;
+        this._cacheTag = cacheTag;
+
+        this._cache = this._initializeCache();
     }
 
     // Private
 
     /**
-     * Get cache by tag
+     * Get cache bu tag
      *
      * @private
-     * @returns {Object|null}
+     * @returns {*|{}}
      */
-    _getCache() {
-        return this._driver.get(this._cacheTag);
+    _initializeCache() {
+        return this._driver.get(this._cacheTag) ?? {};
     }
 
     /**
-     * Set cache by tag
+     * Save cache by tag
      *
      * @private
      * @returns void
      */
-    _setCache() {
+    _saveCache() {
         if (isEmptyObject(this._cache)) {
             this._clearCache();
             return;
