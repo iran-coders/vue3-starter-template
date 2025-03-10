@@ -17,10 +17,13 @@ class CrudService {
      * Get items
      *
      * @param {AxiosRequestConfig} [config]
+     * @param {Boolean} cache
+     * @param {"LocalStorage"|"CacheStorage"|"IndexedDB"} cacheType
+     * @param {"justCache"|"cacheFirstThenUpdate"} strategy - Caching strategy.
      * @returns {Promise<AxiosResponse>}
      */
-    static getAll(config) {
-        return ApiService.get(this.URL, config);
+    static getAll(config,cache, cacheType, strategy) {
+        return ApiService.get(this.URL, config,cache, cacheType, strategy);
     }
 
     /**
@@ -28,10 +31,13 @@ class CrudService {
      *
      * @param {Number|String} id
      * @param {AxiosRequestConfig} [config]
+     * @param {Boolean} cache
+     * @param {"LocalStorage"|"CacheStorage"|"IndexedDB"} cacheType
+     * @param {"justCache"|"cacheFirstThenUpdate"} strategy - Caching strategy.
      * @returns {Promise<AxiosResponse>}
      */
-    static getOneById(id, config) {
-        return ApiService.get(`${this.URL}/${id}`, config);
+    static getOneById(id, config,cache, cacheType, strategy) {
+        return ApiService.get(`${this.URL}/${id}`, config,cache, cacheType, strategy);
     }
 
     /**

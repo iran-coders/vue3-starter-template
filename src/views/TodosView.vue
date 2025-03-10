@@ -59,6 +59,8 @@
 
     // Stores
     import { useUserStore } from '@/stores/user.store';
+    import CacheDriverType from "@/enums/CacheDriverType";
+    import CacheStrategies from "@/enums/CacheStrategies";
 
     export default {
         name: 'TodosView',
@@ -70,7 +72,11 @@
         },
 
         setup() {
-            const { todosLoading, todos, fetchTodos } = useFetchTodos();
+            const { todosLoading, todos, fetchTodos } = useFetchTodos({
+                cache:true,
+                cacheType:CacheDriverType.INDEXED_DB,
+                strategy:CacheStrategies.CACHE_FIRST_THEN_UPDATE
+            });
             const { page, itemsPerPage, paginationParams } = useRoutePagination();
 
             const filters = useApplyFilters({

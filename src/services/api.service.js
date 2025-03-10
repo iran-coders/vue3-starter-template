@@ -2,6 +2,9 @@ import axios from 'axios';
 
 import HttpMethod from '@/enums/HttpMethod';
 
+import StrategiesManager from "@/utils/cache/strategiesManager"
+import CacheManager from "@/utils/cache/cacheManager";
+
 /**
  * @callback onFulfilledRequest
  * @param {AxiosRequestConfig} config
@@ -18,6 +21,17 @@ const instance = axios.create({
 });
 
 class ApiService {
+
+    /**
+     * Generate cache key based on URL and query params.
+     * @param {string} url - The URL.
+     * @param {Object} [params] - The query parameters.
+     * @returns {string} Cache key.
+     */
+    static generateCacheKey(url, params = {}) {
+        const queryParams = new URLSearchParams(params).toString();
+        return queryParams ? `${url}?${queryParams}` : url;
+    }
     /**
      * Set header for all or specific http method
      *
@@ -89,10 +103,30 @@ class ApiService {
      * Custom request
      *
      * @param {AxiosRequestConfig} config
+     * @param {Boolean} cache
+     * @param {"LocalStorage"|"CacheStorage"|"IndexedDB"} cacheType
+     * @param {"justCache"|"cacheFirstThenUpdate"} strategy - Caching strategy.
      * @returns {Promise<AxiosResponse>}
      */
-    static request(config) {
-        return instance.request(config);
+    static async  request(config,cache,cacheType,strategy) {
+        const url = config.url
+        const key = this.generateCacheKey(url, config?.params ?config.params : {});
+        if (cache && config.method==="get") {
+            return StrategiesManager.executeStrategy(strategy, {
+                key,
+                cacheType,
+                url,
+                config,
+                axiosInstance: instance,
+            });
+        }
+
+
+        const response = await instance.get(url, config);
+        if (cache && config.method==="get") {
+            await CacheManager.set(key, response.data, cacheType);
+        }
+        return response;
     }
 
     /**
@@ -100,10 +134,29 @@ class ApiService {
      *
      * @param {String} url
      * @param {AxiosRequestConfig} [config]
+     * @param {Boolean} cache
+     * @param {"LocalStorage"|"CacheStorage"|"IndexedDB"} cacheType
+     * @param {"justCache"|"cacheFirstThenUpdate"} strategy - Caching strategy.
      * @returns {Promise<AxiosResponse>}
      */
-    static get(url, config) {
-        return instance.get(url, config);
+    static async get(url, config,cache,cacheType,strategy = StrategiesManager.strategies.CACHE_FIRST_THEN_UPDATE) {
+        const key = this.generateCacheKey(url, config?.params ?config.params : {});
+        if (cache) {
+            return StrategiesManager.executeStrategy(strategy, {
+                key,
+                cacheType,
+                url,
+                config,
+                axiosInstance: instance,
+            });
+        }
+
+
+        const response = await instance.get(url, config);
+        if (cache) {
+            await CacheManager.set(key, response.data, cacheType);
+        }
+        return response;
     }
 
     /**
