@@ -3,6 +3,7 @@
         <button
             type="submit"
             class="btn btn-sm text-white"
+            @click="toggleSideMenu"
         >
             <i class="bi-list h4"></i>
         </button>
@@ -44,8 +45,13 @@
         components: {
             AppSettings
         },
-
-        setup() {
+        props: {
+            wide: {
+                type: Boolean
+            },
+        },
+        emits: ['update:wide'],
+        setup(props, { emit }) {
             const router = useRouter();
 
             function logout() {
@@ -53,8 +59,12 @@
                 router.push({ name: 'Login' });
             }
 
+            function toggleSideMenu() {
+                emit('update:wide', !props.wide);
+            }
             return {
-                logout
+                logout,
+                toggleSideMenu
             };
         }
     }
