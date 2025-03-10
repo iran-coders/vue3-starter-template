@@ -13,7 +13,7 @@
                     :placeholder="placeholder"
                     :disabled="disabled"
                     :class="inputClassNames"
-                    @focus="onFocus"
+                    @click="toggleMenu"
                 >
 
                 <button
@@ -255,8 +255,6 @@
             const container = ref();
 
             function onFocus() {
-                showMenu();
-
                 const { off } = onClickOutside(container, function () {
                     hideMenu();
                     validate();
@@ -264,6 +262,14 @@
                 });
             }
 
+            function toggleMenu() {
+                if (isShowMenu.value) {
+                    hideMenu();
+                } else {
+                    showMenu();
+                    onFocus();
+                }
+            }
             function clear() {
                 selectedItem.value = undefined;
                 emit('update:modelValue', undefined);
@@ -279,7 +285,7 @@
                 menuClassNames,
 
                 isShowMenu,
-
+                toggleMenu,
                 paginatedItems,
                 addFilteredItems: addPaginatedItems,
 
