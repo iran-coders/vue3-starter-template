@@ -13,7 +13,16 @@
             "id": 2,
             "title": "second todo title",
             "description": "second todo description",
-            "status": "completed",
+            "status": "inProgress",
+            "createdAt": "2011-10-06T09:48:00.000Z",
+            "estimate": "2011-10-07T15:48:00.000Z",
+            "updatedAt": "2011-10-06T09:48:00.000Z"
+        },
+        {
+            "id": 3,
+            "title": "third todo title",
+            "description": "third todo description",
+            "status": "done",
             "createdAt": "2011-10-06T09:48:00.000Z",
             "estimate": "2011-10-07T15:48:00.000Z",
             "updatedAt": "2011-10-06T09:48:00.000Z"
