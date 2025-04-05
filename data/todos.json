@@ -1,0 +1,22 @@
+{
+    "todos": [
+        {
+            "id": 1,
+            "title": "first todo title",
+            "description": "first todo description",
+            "status": "active",
+            "createdAt": "2011-10-05T14:48:00.000Z",
+            "estimate": "2011-10-06T10:48:00.000Z",
+            "updatedAt": "2011-10-05T14:48:00.000Z"
+        },
+        {
+            "id": 2,
+            "title": "second todo title",
+            "description": "second todo description",
+            "status": "completed",
+            "createdAt": "2011-10-06T09:48:00.000Z",
+            "estimate": "2011-10-07T15:48:00.000Z",
+            "updatedAt": "2011-10-06T09:48:00.000Z"
+        }
+    ]
+}

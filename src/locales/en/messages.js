@@ -20,6 +20,7 @@ export default {
     "From": "From",
     "Size": "Size",
     "Todos": "Todos",
+    "Todos Test": "Todos Test",
     "Title": "Title",
     "User": "User",
     "Status": "Status",

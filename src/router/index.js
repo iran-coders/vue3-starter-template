@@ -33,6 +33,11 @@ const router = createRouter({
                     path: 'todos',
                     name: 'Todos',
                     component: () => import('@/views/TodosView.vue')
+                },
+                {
+                    path: 'todos-test',
+                    name: 'Todos-Test',
+                    component: () => import('@/views/TodosViewTest.vue')
                 }
             ]
         },

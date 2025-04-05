@@ -24,6 +24,14 @@
 
                 {{ $t('Todos') }}
             </VSideMenuItem>
+
+            <VSideMenuItem :to="{ name: 'Todos-Test' }">
+                <template #icon>
+                    <i class="bi bi-check2-square"></i>
+                </template>
+
+                {{ $t('Todos Test') }}
+            </VSideMenuItem>
         </nav>
     </aside>
 </template>
