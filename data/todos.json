@@ -1,31 +1,40 @@
 {
-    "todos": [
-        {
-            "id": 1,
-            "title": "first todo title",
-            "description": "first todo description",
-            "status": "active",
-            "createdAt": "2011-10-05T14:48:00.000Z",
-            "estimate": "2011-10-06T10:48:00.000Z",
-            "updatedAt": "2011-10-05T14:48:00.000Z"
-        },
-        {
-            "id": 2,
-            "title": "second todo title",
-            "description": "second todo description",
-            "status": "inProgress",
-            "createdAt": "2011-10-06T09:48:00.000Z",
-            "estimate": "2011-10-07T15:48:00.000Z",
-            "updatedAt": "2011-10-06T09:48:00.000Z"
-        },
-        {
-            "id": 3,
-            "title": "third todo title",
-            "description": "third todo description",
-            "status": "done",
-            "createdAt": "2011-10-06T09:48:00.000Z",
-            "estimate": "2011-10-07T15:48:00.000Z",
-            "updatedAt": "2011-10-06T09:48:00.000Z"
-        }
-    ]
+  "statusCards": [
+    {
+      "title": "active",
+      "id": "1"
+    },
+    {
+      "title": "inProgress",
+      "id": "2"
+    },
+    {
+      "title": "done",
+      "id": "3"
+    },
+    {
+      "title": "ddsdsddd",
+      "id": "50a9"
+    },
+    {
+      "title": "sdsd",
+      "id": "1d77"
+    },
+    {
+      "id": "d2ac",
+      "title": "not checked",
+      "order": 6
+    }
+  ],
+  "todos": [
+    {
+      "statusCardId": "2",
+      "status": "inProgress",
+      "id": "c9d5",
+      "title": "an active todo",
+      "dueDate": "2025-04-06T08:37:00.000Z",
+      "createdAt": "2025-04-06T08:38:15.586Z",
+      "updatedAt": "2025-04-06T08:38:15.586Z"
+    }
+  ]
 }
