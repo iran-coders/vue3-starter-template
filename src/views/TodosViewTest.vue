@@ -1,135 +1,117 @@
 <template>
-<div class="h3 mb-4">{{ $t("Todos Test") }}</div>
+    <div class="h3 mb-4">{{ $t("Todos Test") }}</div>
 
-<div class="d-flex flex-wrap gap-2 row-gap-4">
-    <div
-        v-for="(list, index) in statusCards"
-        :key="list?.id"
-        class="list-card d-flex flex-column gap-2 text-light p-2 rounded-3 overflow-hidden w-100"
-        @dragover="handleDragOver($event, list.id)"
-        @drop="handleDrop($event, list.id)"
-    >
-
-        <div class="d-flex justify-content-between align-items-center">
-            <textarea
-                v-model="list.title"
-                ref="(el) => listTitleRefs[index] = el"
-                class="card-title fs-6 m-0 grey bg-transparent border-0 w-100"
-                :readonly="!list.isEditing"
-                @click="startEditingList(index)"
-                @blur="finishEditingList(index)"
-                @keyup.enter="finishEditingList(index)"
-                @focus="onListTitleFocus($event, index)"
-                @input="autoResize"
-                :class="{
-          'cursor-text': list.isEditing,
-          'cursor-pointer': !list.isEditing,
-        }"
-            />
-        </div>
-        <div class="d-flex flex-column gap-2">
-            <div
-                v-for="todo in getTodosByStatus(list?.id)"
-                :key="todo.id"
-                class="todo-item d-flex justify-content-between align-items-center dark-grey ps-2 rounded-2"
-                draggable="true"
-                @dragstart="handleDragStart($event, todo, list.id)"
-            >
-                <span class="fs-6 m-0 grey">{{ todo?.title }}</span>
-                <button class="btn text-white border-0" @click="openTodoModal(todo)">
-                    <i class="bi bi-three-dots grey"></i>
-                </button>
+    <div class="d-flex flex-wrap gap-2 row-gap-4">
+        <div
+            v-for="(list, index) in statusCards"
+            :key="list?.id"
+            class="list-card d-flex flex-column gap-2 text-light p-2 rounded-3 overflow-hidden w-100"
+            @dragover="handleDragOver($event, list.id)"
+            @drop="handleDrop($event, list.id)"
+        >
+            <div class="d-flex justify-content-between align-items-center">
+                <textarea
+                    v-model="list.title"
+                    ref="(el) => listTitleRefs[index] = el"
+                    class="card-title fs-6 m-0 grey bg-transparent border-0 w-100"
+                    :readonly="!list.isEditing"
+                    @click="startEditingList(index)"
+                    @blur="finishEditingList(index)"
+                    @keyup.enter="finishEditingList(index)"
+                    @input="autoResize"
+                    :class="{
+                        'cursor-text': list.isEditing,
+                        'cursor-pointer': !list.isEditing,
+                    }"
+                />
             </div>
-
-
-        </div>
-        <div v-if="!list.isAddingNewTodo">
-            <button class="add-btn d-flex gap-1 btn border-0 w-100 text-start px-1 mt-2 rounded-3" @click="startAddingTodo(index)">
-                <i class="bi bi-plus-lg"></i>
-                <span class="bg-transparent">Add a todo</span>
-            </button>
-        </div>
-        <div v-if="list.isAddingNewTodo" class="d-flex flex-column gap-4">
-            <div>
-            <textarea
-                ref="addTodoTextRefs"
-                v-model="newTodoTitles[index]"
-                class="new-todo-title mt-1 w-100 fs-6 m-0 grey bg-transparent btn-outline-info rounded-1"
-                placeholder="Enter a title or paste a link"
-                @input="autoResize"
-                @keyup.enter="addNewTodo(index)"
-                autofocus
-            />
-                <div class="due-date d-flex flex-column gap-1" >
-                    <div class="d-flex gap-2">
-                        <i class="bi bi-alarm"></i>
-                        <span>Due Date: </span>
-                    </div>
-                    <input
-                        v-model="newDueDate[index]"
-                        class="bg-transparent text-white border-0 p-1"
-                        type="datetime-local"
-                    >
+            <div class="d-flex flex-column gap-2">
+                <div
+                    v-for="todo in getTodosByStatus(list?.id)"
+                    :key="todo.id"
+                    class="todo-item d-flex justify-content-between align-items-center dark-grey ps-2 rounded-2"
+                    draggable="true"
+                    @dragstart="handleDragStart($event, todo, list.id)"
+                >
+                    <span class="fs-6 m-0 grey">{{ todo?.title }}</span>
+                    <button class="btn text-white border-0" @click="openTodoModal(todo)">
+                        <i class="bi bi-three-dots grey"></i>
+                    </button>
                 </div>
             </div>
+            <div v-if="!list.isAddingNewTodo">
+                <button class="add-btn d-flex gap-1 btn border-0 w-100 text-start px-1 mt-2 rounded-3" @click="startAddingTodo(index)">
+                    <i class="bi bi-plus-lg"></i>
+                    <span class="bg-transparent">Add a todo</span>
+                </button>
+            </div>
+            <div v-if="list.isAddingNewTodo" class="d-flex flex-column gap-4">
+                <div>
+                    <textarea
+                        ref="addTodoTextRefs"
+                        v-model="newTodoTitles[index]"
+                        class="new-todo-title mt-1 w-100 fs-6 m-0 grey bg-transparent btn-outline-info rounded-1"
+                        placeholder="Enter a title or paste a link"
+                        @input="autoResize"
+                        @keyup.enter="addNewTodo(index)"
+                        autofocus
+                    />
+                    <div class="due-date d-flex flex-column gap-1">
+                        <div class="d-flex gap-2">
+                            <i class="bi bi-alarm"></i>
+                            <span>Due Date: </span>
+                        </div>
+                        <input v-model="newDueDate[index]" class="bg-transparent text-white border-0 p-1" type="datetime-local" />
+                    </div>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <button class="btn bg-info rounded-2" @click="addNewTodo(index)">Add todo</button>
+                    <button class="btn text-white" @click="cancelAddingTodo(index)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--------------------------------->
+        <button
+            v-if="!isAddingNewList"
+            class="list-card add-list d-flex gap-2 border-0 overflow-hidden w-100 p-2 rounded-3 text-light"
+            @click="startAddingNewList"
+        >
+            <i class="bi bi-plus-lg"></i>
+            <span> Add List </span>
+        </button>
+
+        <div v-if="isAddingNewList" class="d-flex flex-column gap-1 list-card overflow-hidden w-100 p-2 rounded-3">
+            <div>
+                <textarea
+                    ref="newListTitleRef"
+                    v-model="newListTitle"
+                    class="new-todo-title mt-1 w-100 fs-6 m-0 grey bg-transparent btn-outline-info rounded-1"
+                    placeholder="Enter a title"
+                    @input="autoResize"
+                    @keyup.enter="addNewList"
+                    autofocus
+                />
+            </div>
             <div class="d-flex gap-2 align-items-center">
-                <button class="btn bg-info rounded-2" @click="addNewTodo(index)">Add todo</button>
-                <button class="btn text-white" @click="cancelAddingTodo(index)">
+                <button class="btn bg-info rounded-2" @click="addNewList">{{ $t("Add List") }}</button>
+                <button class="btn text-white" @click="cancelAddingList">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
         </div>
     </div>
-
-    <!--------------------------------->
-    <button
-        v-if="!isAddingNewList"
-        class="list-card add-list d-flex gap-2 border-0 overflow-hidden w-100 p-2 rounded-3 text-light"
-        @click="startAddingNewList"
-    >
-        <i class="bi bi-plus-lg"></i>
-        <span>
-               Add List
-            </span>
-    </button>
-
-    <div
-        v-if="isAddingNewList"
-        class="d-flex flex-column gap-1 list-card overflow-hidden w-100 p-2 rounded-3"
-    >
-        <div>
-            <textarea
-                ref="newListTitleRef"
-                v-model="newListTitle"
-                class="new-todo-title mt-1 w-100 fs-6 m-0 grey bg-transparent btn-outline-info rounded-1"
-                placeholder="Enter a title"
-                @input="autoResize"
-                @keyup.enter="addNewList"
-                autofocus
-            />
-        </div>
-        <div class="d-flex gap-2 align-items-center">
-            <button class="btn bg-info rounded-2" @click="addNewList">Add List</button>
-            <button class="btn text-white" @click="cancelAddingList">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-    </div>
-</div>
-<TodosTestModal ref="todoModal" @on-delete="fetchTodos" />
-
+    <TodosTestModal ref="todoModal" @on-delete="fetchTodos" />
 </template>
 
 <script setup>
-import {ref, nextTick, computed, onMounted, watch} from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import axios from "axios";
 import TodosTestModal from "@/components/todos-test/todos-test-modal.vue";
 
-const statusCards = ref([
-    { id: 1, title: "active", isAddingNewTodo: false, isEditing: false },
-    { id: 2, title: "inProgress", isAddingNewTodo: false, isEditing: false },
-    { id: 3, title: "done", isAddingNewTodo: false, isEditing: false },
-]);
+const statusCards = ref([]);
 
 const todos = ref([]);
 const newTodoTitles = ref([]);
@@ -141,12 +123,10 @@ const newListTitle = ref("");
 const newListTitleRef = ref(null);
 
 const listTitleRefs = ref({});
-const isFocused = ref(false);
 
 const todoModal = ref(null);
 
 const dragItem = ref(null);
-const dragOverItem = ref(null);
 const dragOverList = ref(null);
 
 const openTodoModal = (todo) => {
@@ -154,15 +134,15 @@ const openTodoModal = (todo) => {
 };
 
 const getTodosByStatus = (statusCardId) => {
-    return todos.value.filter(todo => todo.statusCardId === statusCardId);
+    return todos.value.filter((todo) => todo.statusCardId === statusCardId);
 };
 
 const fetchStatusCards = async () => {
     try {
         const response = await axios.get("http://localhost:8000/statusCards");
-        statusCards.value = response.data.map(card => ({
+        statusCards.value = response.data.map((card) => ({
             ...card,
-            isAddingNewTodo: false
+            isAddingNewTodo: false,
         }));
     } catch (error) {
         console.error(error);
@@ -201,7 +181,6 @@ const startAddingNewList = () => {
     });
 };
 
-
 const addNewTodo = async (index) => {
     if (!newTodoTitles.value[index]?.trim()) return;
 
@@ -209,11 +188,9 @@ const addNewTodo = async (index) => {
         title: newTodoTitles.value[index],
         status: statusCards.value[index].title,
         statusCardId: statusCards.value[index].id,
-        dueDate: newDueDate.value[index]
-            ? new Date(newDueDate.value[index]).toISOString()
-            : null,
+        dueDate: newDueDate.value[index] ? new Date(newDueDate.value[index]).toISOString() : null,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
     };
 
     try {
@@ -230,14 +207,13 @@ const addNewList = async () => {
 
     const newList = {
         title: newListTitle.value,
-        order: statusCards.value.length + 1
     };
 
     try {
         const response = await axios.post("http://localhost:8000/statusCards", newList);
         statusCards.value.push({
             ...response.data,
-            isAddingNewTodo: false
+            isAddingNewTodo: false,
         });
         cancelAddingList();
     } catch (error) {
@@ -255,21 +231,21 @@ const cancelAddingList = () => {
 
 const autoResize = (event) => {
     const el = event.target;
-    el.style.height = 'auto';
+    el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
 };
 
 const startEditingList = async (index) => {
-    statusCards.value.forEach((card, i) => {
+    statusCards.value.map((card, i) => {
         card.isEditing = i === index;
     });
 
-    await nextTick();
-
-    if (listTitleRefs.value[index]) {
-        listTitleRefs.value[index].focus();
-        listTitleRefs.value[index].select();
-    }
+    nextTick(() => {
+        if (listTitleRefs.value[index]) {
+            listTitleRefs.value[index].focus();
+            listTitleRefs.value[index].select();
+        }
+    });
 };
 
 const finishEditingList = async (index) => {
@@ -279,41 +255,24 @@ const finishEditingList = async (index) => {
     const newTitle = statusCards.value[index].title;
 
     try {
-        await axios.put(
-            `http://localhost:8000/statusCards/${cardId}`,
-            { title: newTitle }
-        );
+        await axios.put(`http://localhost:8000/statusCards/${cardId}`, { title: newTitle });
 
-        const relatedTodos = todos.value.filter(todo => todo.statusCardId === cardId);
+        const relatedTodos = todos.value.filter((todo) => todo.statusCardId === cardId);
 
-        await Promise.all(
-            relatedTodos.map(async todo => {
-                await axios.put(
-                    `http://localhost:8000/todos/${todo.id}`,
-                    { ...todo, status: newTitle }
-                );
-                todo.status = newTitle;
-            })
-        );
-
+        relatedTodos.map(async (todo) => {
+            await axios.put(`http://localhost:8000/todos/${todo.id}`, { ...todo, status: newTitle });
+            todo.status = newTitle;
+        });
     } catch (error) {
         console.error(error);
-        statusCards.value[index].isEditing = true;
     } finally {
         statusCards.value[index].isEditing = false;
     }
 };
 
-const onListTitleFocus = (event, index) => {
-    isFocused.value = true;
-    if (statusCards.value[index].isEditing) {
-        event.target.select();
-    }
-};
-
 const handleDragStart = (event, todo, listId) => {
     dragItem.value = { todo, fromListId: listId };
-    event.target.classList.add('dragging');
+    event.target.classList.add("dragging");
 };
 const handleDragOver = (event, listId) => {
     event.preventDefault();
@@ -322,7 +281,6 @@ const handleDragOver = (event, listId) => {
 };
 
 const handleDrop = async (event, listId) => {
-
     event.preventDefault();
     event.stopPropagation();
     if (!dragItem.value) return;
@@ -338,9 +296,10 @@ const handleDrop = async (event, listId) => {
         await axios.put(`http://localhost:8000/todos/${todo.id}`, {
             ...todo,
             statusCardId: listId,
-            status: statusCards.value.find(c => c.id === listId)?.title
+            status: statusCards.value.find((c) => c.id === listId)?.title,
         });
 
+        await fetchTodos();
     } catch (error) {
         console.error(error);
     } finally {
@@ -349,20 +308,13 @@ const handleDrop = async (event, listId) => {
 };
 
 const resetDragState = () => {
-    document.querySelectorAll('.dragging').forEach(el => {
-        el.classList.remove('dragging');
+    document.querySelectorAll(".dragging").forEach((el) => {
+        el.classList.remove("dragging");
     });
 
     dragItem.value = null;
-    dragOverItem.value = null;
     dragOverList.value = null;
 };
-
-watch(todos, (newVal, oldVal)=> {
-    if (newVal !== oldVal) {
-        fetchTodos()
-    }
-})
 
 onMounted(() => {
     fetchStatusCards();
@@ -372,7 +324,7 @@ onMounted(() => {
 
 <style lang="scss">
 .add-list {
-    transition: background-color .2s ease;
+    transition: background-color 0.2s ease;
     &:hover {
         background-color: #444;
     }
@@ -408,7 +360,7 @@ onMounted(() => {
 
         &.dragging {
             opacity: 0.5;
-            rotate: 10deg;
+            rotate: 2deg;
         }
     }
 
@@ -423,13 +375,11 @@ onMounted(() => {
         &::-webkit-scrollbar {
             display: none;
         }
-
-
     }
 }
 
 .due-date {
-    font-size: .875rem;
+    font-size: 0.875rem;
 }
 
 .list-card-title {

@@ -1,38 +1,36 @@
 <template>
-<div v-if="showModal" class="modal-overlay" @click.self="closeModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5>Todo Details</h5>
-            <button @click="closeModal" class="close-btn">&times;</button>
-        </div>
+    <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>{{ $t("Todo Details") }}</h5>
+                <button @click="closeModal" class="close-btn">&times;</button>
+            </div>
 
-        <div class="modal-body">
-            <div class="todo-info">
-                <p><strong>Title:</strong> {{ currentTodo?.title }}</p>
-                <p><strong>Status:</strong> {{ currentTodo?.status }}</p>
-                <p v-if="currentTodo?.dueDate">
-                    <strong>Due:</strong> {{ formatDate(currentTodo.dueDate) }}
-                </p>
+            <div class="modal-body">
+                <div class="todo-info">
+                    <p>
+                        <strong>{{ $t("Title") }}:</strong> {{ currentTodo?.title }}
+                    </p>
+                    <p>
+                        <strong>{{ $t("Status") }}:</strong> {{ currentTodo?.status }}
+                    </p>
+                    <p v-if="currentTodo?.dueDate"><strong>Due:</strong> {{ formatDate(currentTodo.dueDate) }}</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button @click="deleteTodo" class="btn-delete"><i class="bi bi-trash"></i> {{ $t("Delete Todo") }}</button>
+                <button @click="closeModal" class="btn-cancel">{{ $t("Cancel") }}</button>
             </div>
         </div>
-
-        <div class="modal-footer">
-            <button @click="deleteTodo" class="btn-delete">
-                <i class="bi bi-trash"></i> Delete Todo
-            </button>
-            <button @click="closeModal" class="btn-cancel">
-                Cancel
-            </button>
-        </div>
     </div>
-</div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
+import { ref } from "vue";
+import axios from "axios";
 
-const emit = defineEmits(['onDelete']);
+const emit = defineEmits(["onDelete"]);
 
 const showModal = ref(false);
 const currentTodo = ref(null);
@@ -51,7 +49,7 @@ const deleteTodo = async () => {
 
     try {
         await axios.delete(`http://localhost:8000/todos/${currentTodo.value.id}`);
-        emit('onDelete', currentTodo.value.id);
+        emit("onDelete", currentTodo.value.id);
         closeModal();
     } catch (error) {
         console.error("Error deleting todo:", error);

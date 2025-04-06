@@ -13,17 +13,12 @@
       "id": "3"
     },
     {
-      "title": "ddsdsddd",
-      "id": "50a9"
+      "title": "sssd",
+      "id": "15fe"
     },
     {
-      "title": "sdsd",
-      "id": "1d77"
-    },
-    {
-      "id": "d2ac",
-      "title": "not checked",
-      "order": 6
+      "title": "dddss",
+      "id": "f79b"
     }
   ],
   "todos": [
@@ -35,6 +30,24 @@
       "dueDate": "2025-04-06T08:37:00.000Z",
       "createdAt": "2025-04-06T08:38:15.586Z",
       "updatedAt": "2025-04-06T08:38:15.586Z"
+    },
+    {
+      "id": "e142",
+      "title": "sdsfsf",
+      "status": "active",
+      "statusCardId": "1",
+      "dueDate": null,
+      "createdAt": "2025-04-06T18:18:10.943Z",
+      "updatedAt": "2025-04-06T18:18:10.943Z"
+    },
+    {
+      "id": "1868",
+      "title": "sfsff",
+      "status": "sssd",
+      "statusCardId": "15fe",
+      "dueDate": null,
+      "createdAt": "2025-04-06T18:18:12.231Z",
+      "updatedAt": "2025-04-06T18:18:12.231Z"
     }
   ]
 }
