@@ -7,16 +7,15 @@
     >
         <i class="bi bi-arrow-left"></i>
     </button>
-
-    <button
-        v-for="number in visiblePageNumbers"
-        :key="number"
-        class="page-number bg-primary-subtle d-flex align-items-center justify-content-center"
-        @click="goToPage(number)"
-        :class="{ 'active': modelValue === number }"
-    >
-        {{ number }}
-    </button>
+        <button
+            v-for="number in visiblePageNumbers"
+            :key="number"
+            class="page-number bg-primary-subtle d-flex align-items-center justify-content-center"
+            @click="goToPage(number)"
+            :class="{ 'active': modelValue === number }"
+        >
+            {{ number }}
+        </button>
 
     <button
         class="arrow bg-primary-subtle d-flex align-items-center justify-content-center border-0"
@@ -44,7 +43,8 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 export default {
     name: 'VPagination',
@@ -75,26 +75,38 @@ export default {
     emits: ['update:modelValue', 'update:size'],
 
     setup(props, context) {
+        const route = useRoute();
+        const router = useRouter();
+
         const count = computed(() => Math.ceil(props.total / props.size));
+        const currentInSightNumbers = ref([1, props.numbersCount]);
+
 
         const visiblePageNumbers = computed(() => {
-            const totalPages = count.value;
-            const currentPage = props.modelValue;
-            const maxVisibleButtons = props.numbersCount;
-
-            if (totalPages <= maxVisibleButtons) {
-                return Array.from({ length: totalPages }, (_, i) => i + 1);
+            if (count.value <= props.numbersCount) {
+                return Array.from({ length: count.value }, (_, i) => i + 1);
+            } else {
+                const [start, end] = currentInSightNumbers.value;
+                return Array.from({ length: end - start + 1 }, (_, i) => start + i);
             }
+        });
 
-            let startPage = currentPage - Math.floor(maxVisibleButtons / 2) > 1 ? currentPage - Math.floor(maxVisibleButtons / 2) : 1;
-            let endPage = startPage + maxVisibleButtons - 1;
+        // watches count and if it changes (by changing size) currentInSightNumbers re-fetches. So the visible numbers change
+        watch(count, (newCount) => {
+            currentInSightNumbers.value = [1, props.numbersCount];
+        }, { immediate: true });
 
-            if (endPage > totalPages) {
-                endPage = totalPages;
-                startPage = endPage - maxVisibleButtons + 1 ? endPage - maxVisibleButtons + 1 : 1;
+        watch(() => props.modelValue, (newPage) => {
+            if (count.value <= props.numbersCount) return;
+            const [start, end] = currentInSightNumbers.value;
+
+            if (newPage < start) {
+                // newPage - props.numbersCount - 1 : fetches the end number going backward (before the current visible start number)
+                currentInSightNumbers.value = [newPage, newPage + props.numbersCount - 1];
+            } else if (newPage > end) {
+                // newPage - props.numbersCount + 1 : fetches the start number going forward (after the current visible end number)
+                currentInSightNumbers.value = [newPage - props.numbersCount + 1, newPage];
             }
-            return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-
         });
 
         function updateValue(value) {
@@ -109,6 +121,7 @@ export default {
             }
 
             context.emit('update:modelValue', value);
+            router.push({ query: { ...route.query, page: value } });
         }
 
         function goNext() {
@@ -125,7 +138,26 @@ export default {
 
         function updateSize(value) {
             context.emit('update:size', Number(value));
+            context.emit('update:modelValue', 1);
+            router.push({ query: { ...route.query, items_per_page: value, page: 1 } });
         }
+
+        onMounted(() => {
+            const pageFromUrl = Number(route.query.page) || 1;
+            const sizeFromUrl = Number(route.query.items_per_page) || props.size;
+
+            context.emit('update:modelValue', pageFromUrl);
+            context.emit('update:size', sizeFromUrl);
+
+            if (pageFromUrl > count.value) {
+                // start: 1, end: 5
+                currentInSightNumbers.value = [1, props.numbersCount];
+            } else {
+                const start = Math.max(1, pageFromUrl - Math.floor(props.numbersCount / 2));
+                const end = Math.min(count.value, start + props.numbersCount - 1);
+                currentInSightNumbers.value = [start, end];
+            }
+        });
 
         return {
             count,
