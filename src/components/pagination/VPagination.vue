@@ -92,7 +92,7 @@ export default {
         });
 
         // watches count and if it changes (by changing size) currentInSightNumbers re-fetches. So the visible numbers change
-        watch(count, (newCount) => {
+        watch(count, () => {
             currentInSightNumbers.value = [1, props.numbersCount];
         }, { immediate: true });
 
@@ -143,7 +143,8 @@ export default {
         }
 
         onMounted(() => {
-            const pageFromUrl = Number(route.query.page) || 1;
+            const currentPageBySize = +route.query.page > +count.value ? 1 : +route.query.page;
+            const pageFromUrl = currentPageBySize;
             const sizeFromUrl = Number(route.query.items_per_page) || props.size;
 
             context.emit('update:modelValue', pageFromUrl);
