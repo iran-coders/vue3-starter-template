@@ -25,6 +25,7 @@ export default {
     "Todo Details": "Todo Details",
     "Delete Todo": "Delete Todo",
     "Add List": "Add List",
+    "Due": "Due",
     User: "User",
     Status: "Status",
     Completed: "Completed",
