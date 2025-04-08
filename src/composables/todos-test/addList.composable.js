@@ -1,6 +1,7 @@
 import { ref, nextTick, onMounted } from "vue";
-import axios from "axios";
 import { useTodoStore } from "@/stores/todo.store";
+import { useLoading } from "@/composables/loading.composable";
+import TodoTestService from "@/services/todoTest.service";
 
 export default function useAddList() {
     const todoStore = useTodoStore();
@@ -8,6 +9,7 @@ export default function useAddList() {
     const isAddingNewList = ref(false);
     const newListTitle = ref("");
     const newListTitleRef = ref(null);
+    const { startLoading, endLoading } = useLoading();
 
     const fetchStatusCards = async () => {
         try {
@@ -39,7 +41,10 @@ export default function useAddList() {
             title: newListTitle.value,
         };
         try {
-            const response = await axios.post("http://localhost:8000/statusCards", newList);
+            startLoading();
+            TodoTestService.setURL("statusCards");
+
+            const response = await TodoTestService.post(newList);
             todoStore.statusCards.push({
                 ...response.data,
                 isAddingNewTodo: false,
@@ -47,6 +52,7 @@ export default function useAddList() {
             cancelAddingList();
         } catch (error) {
             console.error(error);
+            endLoading();
         }
     };
 

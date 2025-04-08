@@ -1,58 +1,68 @@
-import {defineStore} from 'pinia';
-import { ref } from 'vue';
-import axios from 'axios';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { useLoading } from "@/composables/loading.composable";
+import TodoTestService from "@/services/todoTest.service";
 
-export const useTodoStore = defineStore('todos', () => {
+export const useTodoStore = defineStore("todos", () => {
     const statusCards = ref([]);
     const todos = ref([]);
-    const isLoading = ref(false);
+    const { isLoading, startLoading, endLoading } = useLoading();
 
-    const fetchStatusCards = async () => {
-        isLoading.value = true;
+    const fetchStatusCards = async (addingStatus) => {
+        startLoading();
 
         try {
-            const response = await axios.get("http://localhost:8000/statusCards");
+            TodoTestService.setURL("statusCards");
+            const response = await TodoTestService.getAll();
             statusCards.value = response.data;
+
+            if (addingStatus) {
+                statusCards.value.map((card) => ({
+                    ...card,
+                    ...addingStatus,
+                }));
+            }
         } catch (error) {
             console.error(error);
         } finally {
-            isLoading.value = false;
+            endLoading();
         }
     };
 
     const fetchTodos = async () => {
-        isLoading.value = true;
+        startLoading();
 
         try {
-            const response = await axios.get("http://localhost:8000/todos");
+            TodoTestService.setURL("todos");
+            const response = await TodoTestService.getAll();
             todos.value = response.data;
         } catch (error) {
             console.error(error);
         } finally {
-            isLoading.value = false;
+            endLoading();
         }
     };
 
     const addTodo = async (body) => {
-        isLoading.value = true;
+        startLoading();
 
         try {
-            const response = await axios.post("http://localhost:8000/todos", body);
+            TodoTestService.setURL("todos");
+            const response = await TodoTestService.post(body);
             todos.value.push(response.data);
         } catch (error) {
             console.error(error);
         } finally {
-            isLoading.value = false;
+            endLoading();
         }
     };
-
 
     return {
         statusCards,
         todos,
-        isLoading,
         fetchStatusCards,
         fetchTodos,
         addTodo,
+        isLoading,
     };
 });

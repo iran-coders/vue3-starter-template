@@ -1,6 +1,7 @@
 import { ref, nextTick, onMounted } from "vue";
-import axios from "axios";
 import { useTodoStore } from "@/stores/todo.store";
+import TodoTestService from "@/services/todoTest.service";
+import { useLoading } from "../loading.composable";
 
 export default function useTodosList() {
     const todoStore = useTodoStore();
@@ -8,6 +9,7 @@ export default function useTodosList() {
     const listTitleRefs = ref({});
     const dragItem = ref(null);
     const dragOverList = ref(null);
+    const { startLoading, endLoading } = useLoading();
 
     const autoResize = (event) => {
         const el = event.target;
@@ -35,23 +37,29 @@ export default function useTodosList() {
         const newTitle = todoStore.statusCards[index].title;
 
         try {
-            await axios.put(`http://localhost:8000/statusCards/${cardId}`, { title: newTitle });
+            startLoading();
+
+            TodoTestService.setURL("statusCards");
+            await TodoTestService.put(cardId, { title: newTitle });
 
             const relatedTodos = todoStore.todos.filter((todo) => todo.statusCardId === cardId);
 
             relatedTodos.map(async (todo) => {
-                await axios.put(`http://localhost:8000/todos/${todo.id}`, { ...todo, status: newTitle });
+                TodoTestService.setURL("todos");
+                await TodoTestService.put(todo.id, { ...todo, status: newTitle });
                 todo.status = newTitle;
             });
         } catch (error) {
             console.error(error);
         } finally {
             todoStore.statusCards[index].isEditing = false;
+            endLoading();
         }
     };
 
     const getDraggedItem = (item) => {
         dragItem.value = item;
+        console.log(item);
     };
 
     const handleDragOver = (event, listId) => {
@@ -66,7 +74,6 @@ export default function useTodosList() {
         if (!dragItem.value) return;
 
         const { todo, fromListId } = dragItem.value;
-        console.log({ todo, fromListId });
 
         if (fromListId === listId) {
             resetDragState();
@@ -74,7 +81,10 @@ export default function useTodosList() {
         }
 
         try {
-            await axios.put(`http://localhost:8000/todos/${todo.id}`, {
+            startLoading();
+
+            TodoTestService.setURL("todos");
+            await TodoTestService.put(todo.id, {
                 ...todo,
                 statusCardId: listId,
                 status: todoStore.statusCards.find((card) => card.id === listId)?.title,
@@ -85,6 +95,7 @@ export default function useTodosList() {
             console.error(error);
         } finally {
             resetDragState();
+            endLoading();
         }
     };
 
@@ -113,6 +124,6 @@ export default function useTodosList() {
         handleDragOver,
         handleDrop,
         resetDragState,
-        todoStore
+        todoStore,
     };
 }
