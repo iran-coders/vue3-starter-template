@@ -143,7 +143,7 @@ export default {
         }
 
         onMounted(() => {
-            const currentPageBySize = +route.query.page > +count.value ? 1 : +route.query.page;
+            const currentPageBySize = +route.query.page ? +route.query.page > +count.value ? 1 : +route.query.page: 1;
             const pageFromUrl = currentPageBySize;
             const sizeFromUrl = Number(route.query.items_per_page) || props.size;
 
