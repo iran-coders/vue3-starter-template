@@ -38,6 +38,11 @@ const router = createRouter({
                     path: 'todos-test',
                     name: 'Todos-Test',
                     component: () => import('@/views/TodosViewTest.vue')
+                },
+                {
+                    path: 'comments',
+                    name: 'comments',
+                    component: () => import('@/views/CommentsView.vue')
                 }
             ]
         },

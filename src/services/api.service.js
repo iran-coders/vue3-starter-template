@@ -2,7 +2,7 @@ import axios from "axios";
 import { urls } from "./apiUrls.service";
 import HttpMethod from "@/enums/HttpMethod";
 
-const baseURL = urls.todoTestUrl;
+const baseURL = urls.baseUrl;
 /**
  * @callback onFulfilledRequest
  * @param {AxiosRequestConfig} config

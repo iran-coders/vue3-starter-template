@@ -32,6 +32,14 @@
 
                 {{ $t('Todos Test') }}
             </VSideMenuItem>
+
+            <VSideMenuItem :to="{ name: 'comments' }">
+                <template #icon>
+                    <i class="bi bi-chat-left-text"></i>
+                </template>
+
+                {{ $t('comments') }}
+            </VSideMenuItem>
         </nav>
     </aside>
 </template>
