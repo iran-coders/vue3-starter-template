@@ -11,57 +11,17 @@
     {
       "title": "done",
       "id": "3"
-    },
-    {
-      "title": "jjj",
-      "id": "c983"
     }
   ],
   "todos": [
     {
-      "id": "e90f",
-      "title": "new test",
-      "status": "active",
-      "statusCardId": "1",
-      "dueDate": "2025-04-15T20:29:00.000Z",
-      "createdAt": "2025-04-08T18:05:59.417Z",
-      "updatedAt": "2025-04-08T18:05:59.417Z"
-    },
-    {
-      "id": "a4b4",
-      "title": "sdsd",
-      "status": "inProgress",
       "statusCardId": "2",
-      "dueDate": null,
-      "createdAt": "2025-04-08T18:15:09.789Z",
-      "updatedAt": "2025-04-08T18:15:09.790Z"
-    },
-    {
-      "id": "2c61",
-      "title": "dfdf",
-      "status": "jjj",
-      "statusCardId": "c983",
-      "dueDate": null,
-      "createdAt": "2025-04-08T18:19:40.391Z",
-      "updatedAt": "2025-04-08T18:19:40.391Z"
-    },
-    {
-      "id": "689b",
-      "title": "gg",
-      "status": "jjj",
-      "statusCardId": "c983",
-      "dueDate": null,
-      "createdAt": "2025-04-08T18:19:46.910Z",
-      "updatedAt": "2025-04-08T18:19:46.910Z"
-    },
-    {
-      "id": "50b5",
-      "title": "sdsds",
       "status": "inProgress",
-      "statusCardId": "2",
-      "dueDate": null,
-      "createdAt": "2025-04-08T18:23:02.009Z",
-      "updatedAt": "2025-04-08T18:23:02.009Z"
+      "id": "c9d5",
+      "title": "an active todo",
+      "dueDate": "2025-04-06T08:37:00.000Z",
+      "createdAt": "2025-04-06T08:38:15.586Z",
+      "updatedAt": "2025-04-06T08:38:15.586Z"
     }
   ]
 }

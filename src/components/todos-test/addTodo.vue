@@ -8,7 +8,7 @@
     <div v-if="list.isAddingNewTodo" class="d-flex flex-column gap-4">
         <div class="d-flex flex-column gap-2">
             <textarea
-                ref="addTodoTextRefs"
+                :ref="(el)=> addTodoTextRefs[listIndex] = el"
                 v-model="newTodoTitles[listIndex]"
                 class="new-todo-title ps-1 pe-1 mt-3 w-100 fs-6 m-0 text-grey bg-dark-grey btn-outline-info rounded-1 border border-dark-subtle"
                 placeholder="Enter a title or paste a link"

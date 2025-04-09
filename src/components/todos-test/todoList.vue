@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-between align-items-center">
      <textarea
          v-model="list.title"
-         ref="(el) => listTitleRefs[index] = el"
+         :ref="(el) => listTitleRefs[index] = el"
          class="card-title fs-6 m-0 text-grey bg-transparent border-0 w-100"
          :readonly="!list.isEditing"
          @click="startEditingList(index)"
@@ -47,7 +47,8 @@ const {
     getDraggedItem,
     handleDragOver,
     handleDrop,
-    todoStore
+    todoStore,
+    listTitleRefs
 } = useTodoList();
 </script>
 

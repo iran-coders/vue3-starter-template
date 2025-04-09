@@ -1,5 +1,5 @@
-import { ref, nextTick, onMounted } from "vue";
-import { useTodoStore } from "@/stores/todo.store";
+import {ref, nextTick, onMounted} from "vue";
+import {useTodoStore} from "@/stores/todo.store";
 
 export default function useAddTodo() {
     const todoStore = useTodoStore();
@@ -14,10 +14,8 @@ export default function useAddTodo() {
         newDueDate.value[index] = "";
 
         nextTick(() => {
-            if (addTodoTextRefs.value[index]) {
-                addTodoTextRefs.value[index].focus();
-            }
-        });
+            if (addTodoTextRefs.value[index]) addTodoTextRefs.value[index].focus();
+        }).catch((error) => console.log(error));
     };
 
     const addNewTodo = async (index) => {
@@ -51,7 +49,7 @@ export default function useAddTodo() {
     };
 
     onMounted(() => {
-        todoStore.fetchStatusCards({ isAddingNewTodo: false });
+        todoStore.fetchStatusCards({isAddingNewTodo: false});
         todoStore.fetchTodos();
     });
 

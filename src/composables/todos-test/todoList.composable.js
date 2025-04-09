@@ -26,9 +26,8 @@ export default function useTodosList() {
             if (listTitleRefs.value[index]) {
                 listTitleRefs.value[index].focus();
                 listTitleRefs.value[index].select();
-            }
-        });
-    };
+            }}).catch((error) => console.log(error))
+    }
 
     const finishEditingList = async (index) => {
         if (!todoStore.statusCards[index].isEditing) return;
