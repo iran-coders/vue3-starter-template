@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";import { useLoading } from "@/composables/loading.composable";
+import { ref } from "vue";
+import { useLoading } from "@/composables/loading.composable";
 import commentsService from "@/services/comments.service";
 
 export const useCommentsStore = defineStore("comments", () => {
@@ -11,33 +12,33 @@ export const useCommentsStore = defineStore("comments", () => {
             startLoading();
             const response = await commentsService.getAll();
             let allComments = await response.data;
-            allComments.forEach((comment) => comment.status = 'pending')
+            allComments.forEach((comment, index) => {
+                if (index % 2 == 0) return (comment.status = "pending");
+                else if (index % 3 == 0) return (comment.status = "confirmed");
+                else return (comment.status = "rejected");
+            });
 
             let filteredComments = allComments;
 
             if (filters.id) {
-                console.log(filters.id)
-                filteredComments = filteredComments.filter(comment => {
-                    console.log(filteredComments)
+                filteredComments = filteredComments.filter((comment) => {
                     return comment.id === +filters.id || comment.body.includes(String(filters.id));
                 });
             }
 
             if (filters.length) {
-                console.log(filters.length)
-                // const requiredLength = +filters.length;
-                filteredComments = filteredComments.filter(comment => {
-                    return comment.body.length > +filters.length;
-                })
-
-                // comments.value = allComments.filter(comment => {
-                //     return comment.id === +filters.id || comment.body.includes(String(filters.id));
-                // });
+                filteredComments = filteredComments.filter((comment) => {
+                    return comment.body.length >= +filters.length && comment.body.length < +filters.length + 30;
+                });
             }
-            console.log('filteredComments', filteredComments)
+
+            if (filters.status) {
+                filteredComments = filteredComments.filter((comment) => {
+                    return comment.status === filters.status;
+                });
+            }
 
             comments.value = filteredComments;
-
         } catch (error) {
             console.log(error);
         } finally {
@@ -48,6 +49,6 @@ export const useCommentsStore = defineStore("comments", () => {
     return {
         comments,
         fetchComments,
-        isLoading
+        isLoading,
     };
 });
