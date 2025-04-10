@@ -31,48 +31,52 @@
         </VColumn>
         <VColumn :header="$t('Actions')">
             <template #body="{ item }">
+<!--              {{console.log('item', item)}}-->
                 <div class="d-flex">
                     <VTooltip position="start" theme="secondary">
                         <template #activator="{ on }">
-                            <button class="border-0 bg-transparent btn-sm" v-on="on" @click="showInfo(item)">
-                                <i class="bi bi-eye-fill text-muted"></i>
+                            <button class="border-0 bg-transparent btn-sm" @click="showInfo(item)">
+                                <i class="bi bi-eye-fill text-muted" v-on="on"></i>
                             </button>
                         </template>
                         <span>{{ $t("Show information") }}</span>
-
-                        <!-- <VModal v-model="showInfoModal" size="lg" mobile-breakpoint="md">
-                            <template #title>
-                                {{ $t("Information for Item") }} ID: {{ item?.id }}
-                            </template>
-
-                            <div v-if="item">
-                                <p>
-                                    <strong>{{ $t("Body") }}:</strong> {{ item.body }}
-                                </p>
-                                <p>
-                                    <strong>{{ $t("Email") }}:</strong> {{ item.email }}
-                                </p>
-                                <p>
-                                    <strong>{{ $t("Status") }}:</strong> {{ item.status }}
-                                </p>
-                            </div>
-                            <div v-else>
-                                <p>{{ $t("Loading information...") }}</p>
-                            </div>
-
-                            <template #footer>
-                                <button type="button" class="btn btn-secondary" @click="showInfoModal = false">
-                                    {{ $t("Close") }}
-                                </button>
-                            </template>
-                        </VModal> -->
-
-                        <!-- <VModal v-model:show="showInfoModal" size="md" mobile-breakpoint="sm">
-                            <template #title>title</template>
-                            <template #body>body</template>
-                            <template #footer>footer</template>
-                        </VModal> -->
                     </VTooltip>
+
+                    <VModal v-if="selectedItem && (selectedItem.id === item.id)" v-model:modelValue="showInfoModal" size="xl">
+                      <template #title>
+                        <h3 class="fs-3">
+                          {{ commentModalTitleText(item) }}
+                        </h3>
+                      </template>
+                      <template #default>
+                        <div class="d-flex justify-content-between gap-2">
+                          <div>
+                              <h4 class="fs-4">Comment Info: </h4>
+                            <p>
+                              <strong>{{ $t("Body") }}:</strong> {{ item.body }}
+                            </p>
+                            <p>
+                              <strong>{{ $t("Email") }}:</strong> {{ item.email }}
+                            </p>
+                            <p>
+                              <strong>{{ $t("Status") }}:</strong> {{ item.status }}
+                            </p>
+                          </div>
+
+                          <div>
+                              <h4 class="fs-4">Post Info: </h4>
+                            <p>
+                              <strong>{{ $t("Title") }}:</strong> {{ relatedPost.title }}
+                            </p>
+                            <p>
+                              <strong>{{ $t("Body") }}:</strong> {{ relatedPost.body }}
+                            </p>
+                          </div>
+                        </div>
+
+                      </template>
+
+                    </VModal>
 
                     <VTooltip position="start" theme="success">
                         <template #activator="{ on }">
@@ -115,6 +119,7 @@ import CommentsFilter from "@/components/comments/CommentsFilter.vue";
 import { onMounted, watch } from "vue";
 import { useApplyFilters } from "@/composables/filter.composable";
 import VTooltip from "@/components/VTooltip.vue";
+import VModal from "@/components/VModal.vue";
 
 const filters = useApplyFilters({
     id: undefined,
@@ -128,5 +133,5 @@ onMounted(() => {
 
 watch(filters, () => commentsStore.fetchComments(filters));
 
-const { commentsStore, confirm, reject, showInfo, showInfoModal } = useComments();
+const { commentsStore, confirm, reject, showInfo, showInfoModal, relatedPost, commentModalTitleText, selectedItem } = useComments();
 </script>

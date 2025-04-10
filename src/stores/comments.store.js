@@ -6,10 +6,12 @@ import commentsService from "@/services/comments.service";
 export const useCommentsStore = defineStore("comments", () => {
     const comments = ref(null);
     const { isLoading, startLoading, endLoading } = useLoading();
+    const posts = ref(false);
 
     const fetchComments = async (filters) => {
         try {
             startLoading();
+            commentsService.setURL('comments')
             const response = await commentsService.getAll();
             let allComments = await response.data;
             allComments.forEach((comment, index) => {
@@ -39,6 +41,21 @@ export const useCommentsStore = defineStore("comments", () => {
             }
 
             comments.value = filteredComments;
+
+            await fetchPosts()
+        } catch (error) {
+            console.log(error);
+        } finally {
+            endLoading();
+        }
+    };
+
+    const fetchPosts = async () => {
+        try {
+            startLoading();
+            commentsService.setURL('posts')
+            const response = await commentsService.getAll();
+            posts.value = await response.data;
         } catch (error) {
             console.log(error);
         } finally {
@@ -50,5 +67,7 @@ export const useCommentsStore = defineStore("comments", () => {
         comments,
         fetchComments,
         isLoading,
+        posts,
+        fetchPosts
     };
 });
