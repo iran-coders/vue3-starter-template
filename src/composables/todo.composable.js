@@ -1,20 +1,20 @@
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 // Service
-import TodoService from '@/services/todo.service';
+import TodoService from "@/services/todo.service";
 
 // Composables
-import { useLoading } from '@/composables/loading.composable';
+import { useLoading } from "@/composables/loading.composable";
 
 // Utils
-import { keyBy } from '@/utils';
+import { keyBy } from "@/utils";
 
 export function useFetchTodos() {
     const { isLoading, startLoading, endLoading } = useLoading();
 
     const todos = ref([]);
 
-    const todosKeyById = computed(() => keyBy(todos.value, 'id'));
+    const todosKeyById = computed(() => keyBy(todos.value, "id"));
 
     /**
      * @param {AxiosRequestConfig} [config]
@@ -36,7 +36,7 @@ export function useFetchTodos() {
         todosLoading: isLoading,
         todos,
         todosKeyById,
-        fetchTodos
+        fetchTodos,
     };
 }
 
@@ -61,6 +61,6 @@ export function useFetchTodo(initialValue = TodoService.getDefault()) {
     return {
         todoLoading: isLoading,
         todo,
-        fetchTodoById
+        fetchTodoById,
     };
 }

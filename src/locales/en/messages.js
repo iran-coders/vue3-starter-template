@@ -1,3 +1,5 @@
+// prettier-ignore
+
 export default {
     "Login": "Login",
     "Username": "Username",
@@ -20,7 +22,15 @@ export default {
     "From": "From",
     "Size": "Size",
     "Todos": "Todos",
+    "Todos Test": "Todos Test",
     "Title": "Title",
+    "Todo Details": "Todo Details",
+    "Delete Todo": "Delete Todo",
+    "Add List": "Add List",
+    "Add a todo": "Add a todo",
+    "Add todo": "Add todo",
+    "Due": "Due",
+    "Due Date": "Due Date",
     "User": "User",
     "Status": "Status",
     "Completed": "Completed",
