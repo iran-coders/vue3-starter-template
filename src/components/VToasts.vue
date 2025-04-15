@@ -1,5 +1,5 @@
 <template>
-    <div class="toast-container bottom-0 end-0">
+    <div class="position-fixed bottom-0 end-0">
         <div
             v-for="item of items"
             :key="item.id"

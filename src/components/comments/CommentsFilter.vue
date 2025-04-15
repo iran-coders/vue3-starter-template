@@ -1,5 +1,6 @@
 <template>
-    <VForm class="row">
+<VForm class="row">
+
         <div class="col-3">
             <VInput v-model="filters.id" :placeholder="$t('Filter by Body or Id')">
                 <template #label>{{ $t("Search") }}</template>
@@ -31,7 +32,7 @@
                 <template #label>{{ $t("Status") }}</template>
             </VSelect>
         </div>
-    </VForm>
+</VForm>
 </template>
 
 <script setup>
@@ -41,10 +42,10 @@ import VInput from "@/components/form/VInput.vue";
 import VSelect from "@/components/form/VSelect.vue";
 
 // Composables
-import { useModelRef } from "@/composables/model.composable";
+import {useModelRef} from "@/composables/model.composable";
 
 // Services
-import { t } from "@/services/language.service";
+import {t} from "@/services/language.service";
 
 const props = defineProps({
     modelValue: {
@@ -85,4 +86,7 @@ const textLength = [
         text: t("210 characters or more"),
     },
 ];
+
+
+
 </script>

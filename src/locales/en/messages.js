@@ -66,6 +66,7 @@ export default {
     "Language": "Language",
     "Close": "Close",
     "Theme": "Theme",
+    "Response All": "Response All",
     "Light": "Light",
     "Dark": "Dark",
     "System": "System",
