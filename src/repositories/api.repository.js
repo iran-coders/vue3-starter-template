@@ -17,7 +17,7 @@ const instance = axios.create({
     timeout: import.meta.env.VITE_API_TIMEOUT
 });
 
-class ApiService {
+class ApiRepository {
     /**
      * Set header for all or specific http method
      *
@@ -142,4 +142,4 @@ class ApiService {
     }
 }
 
-export default ApiService;
+export default ApiRepository;

@@ -1,11 +1,11 @@
-import StorageService from './storage.service';
+import LocalStorageService from './local-storage.service';
 
 class PermissionService {
     /**
      * @private
      * @type {Object}
      */
-    static _permissions = StorageService.get(this.STORAGE_KEY) || {};
+    static _permissions = LocalStorageService.get(this.STORAGE_KEY) || {};
 
     /**
      * Storage key
@@ -27,7 +27,7 @@ class PermissionService {
             this._permissions[permission] = true;
         }
 
-        StorageService.set(this.STORAGE_KEY, this._permissions);
+        LocalStorageService.set(this.STORAGE_KEY, this._permissions);
     }
 
     /**
@@ -67,7 +67,7 @@ class PermissionService {
      */
     static clear() {
         this._permissions = {};
-        StorageService.delete(this.STORAGE_KEY);
+        LocalStorageService.delete(this.STORAGE_KEY);
     }
 }
 

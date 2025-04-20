@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
 
 // Service
-import TodoService from '@/services/todo.service';
+import TodoRepository from '@/repositories/todo.repository';
 
 // Composables
 import { useLoading } from '@/composables/loading.composable';
@@ -22,7 +22,7 @@ export function useFetchTodos() {
     function fetchTodos(config) {
         startLoading();
 
-        return TodoService.getAll(config)
+        return TodoRepository.getAll(config)
             .then(function (response) {
                 todos.value = response.data;
                 return response;
@@ -40,7 +40,7 @@ export function useFetchTodos() {
     };
 }
 
-export function useFetchTodo(initialValue = TodoService.getDefault()) {
+export function useFetchTodo(initialValue = TodoRepository.getDefault()) {
     const { isLoading, startLoading, endLoading } = useLoading();
 
     const todo = ref(initialValue);
@@ -48,7 +48,7 @@ export function useFetchTodo(initialValue = TodoService.getDefault()) {
     function fetchTodoById(id) {
         startLoading();
 
-        return TodoService.getOneById(id)
+        return TodoRepository.getOneById(id)
             .then(function (response) {
                 todo.value = response.data;
                 return response;

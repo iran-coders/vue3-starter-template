@@ -1,4 +1,4 @@
-import StorageService from './storage.service';
+import LocalStorageService from './local-storage.service';
 
 class TokenService {
     /**
@@ -17,7 +17,7 @@ class TokenService {
      * @returns void
      */
     static set(value) {
-        StorageService.set(this.STORAGE_KEY, value);
+        LocalStorageService.set(this.STORAGE_KEY, value);
     }
 
     /**
@@ -26,7 +26,7 @@ class TokenService {
      * @returns {String}
      */
     static get() {
-        return StorageService.get(this.STORAGE_KEY);
+        return LocalStorageService.get(this.STORAGE_KEY);
     }
 
     /**
@@ -35,7 +35,7 @@ class TokenService {
      * @returns {Boolean}
      */
     static isExist() {
-        return StorageService.has(this.STORAGE_KEY);
+        return LocalStorageService.has(this.STORAGE_KEY);
     }
 
     /**
@@ -44,7 +44,7 @@ class TokenService {
      * @returns void
      */
     static clear() {
-        StorageService.delete(this.STORAGE_KEY);
+        LocalStorageService.delete(this.STORAGE_KEY);
     }
 }
 

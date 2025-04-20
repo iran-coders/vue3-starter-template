@@ -1,4 +1,4 @@
-import StorageService from './storage.service';
+import LocalStorageService from './local-storage.service';
 
 import { createI18n as createVueI18N } from 'vue-i18n';
 
@@ -31,7 +31,7 @@ class LanguageService {
      * @returns void
      */
     static set(value) {
-        StorageService.set(this.STORAGE_KEY, value);
+        LocalStorageService.set(this.STORAGE_KEY, value);
         location.reload();
     }
 
@@ -41,7 +41,7 @@ class LanguageService {
      * @returns {String}
      */
     static get() {
-        return StorageService.get(this.STORAGE_KEY) ?? this.DEFAULT;
+        return LocalStorageService.get(this.STORAGE_KEY) ?? this.DEFAULT;
     }
 
     /**

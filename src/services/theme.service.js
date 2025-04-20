@@ -1,4 +1,4 @@
-import StorageService from './storage.service';
+import LocalStorageService from './local-storage.service';
 
 class ThemeService {
     /**
@@ -26,7 +26,7 @@ class ThemeService {
      * @returns void
      */
     static set(value) {
-        StorageService.set(this.STORAGE_KEY, value);
+        LocalStorageService.set(this.STORAGE_KEY, value);
         this.updateDOM();
     }
 
@@ -46,7 +46,7 @@ class ThemeService {
      * @returns {String}
      */
     static get() {
-        return StorageService.get(this.STORAGE_KEY) ?? this.DEFAULT;
+        return LocalStorageService.get(this.STORAGE_KEY) ?? this.DEFAULT;
     }
 }
 

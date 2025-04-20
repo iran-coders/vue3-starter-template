@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue';
 
 // Service
-import UserService from '@/services/user.service';
+import UserRepository from '@/repositories/user.repository';
 
 // Composables
 import { useLoading } from '@/composables/loading.composable';
@@ -19,7 +19,7 @@ export function useFetchUsers() {
     function fetchUsers() {
         startLoading();
 
-        return UserService.getAll()
+        return UserRepository.getAll()
             .then(function (response) {
                 users.value = response.data;
                 return response;
@@ -37,7 +37,7 @@ export function useFetchUsers() {
     };
 }
 
-export function useFetchUser(initialValue = UserService.getDefault()) {
+export function useFetchUser(initialValue = UserRepository.getDefault()) {
     const { isLoading, startLoading, endLoading } = useLoading();
 
     const user = ref(initialValue);
@@ -45,7 +45,7 @@ export function useFetchUser(initialValue = UserService.getDefault()) {
     function fetchUserById(id) {
         startLoading();
 
-        return UserService.getOneById(id)
+        return UserRepository.getOneById(id)
             .then(function (response) {
                 user.value = response.data;
                 return response;
