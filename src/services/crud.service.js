@@ -1,4 +1,4 @@
-import ApiService from './api.service';
+import ApiService from "./api.service";
 
 class CrudService {
     /**
@@ -8,9 +8,7 @@ class CrudService {
      * @returns {String}
      */
     static get URL() {
-        throw new Error(
-            'You have to implement the static method "URL", for each class that extend CrudServices!'
-        );
+        throw new Error('You have to implement the static method "URL", for each class that extend CrudServices!');
     }
 
     /**
@@ -45,6 +43,10 @@ class CrudService {
         return ApiService.post(`${this.URL}/create`, data, config);
     }
 
+    static post(data, config) {
+        return ApiService.post(`${this.URL}`, data, config);
+    }
+
     /**
      * Update item by id
      *
@@ -55,6 +57,10 @@ class CrudService {
      */
     static update(id, data, config) {
         return ApiService.post(`${this.URL}/${id}/update`, data, config);
+    }
+
+    static put(id, data, config) {
+        return ApiService.put(`${this.URL}/${id}`, data, config);
     }
 
     /**

@@ -45,7 +45,7 @@
 </template>
 
 <script>
-    import { watch } from 'vue';
+import {onMounted, watch} from 'vue';
 
     // Components
     import TodosFilter from '@/components/todos/TodosFilter.vue';
@@ -90,7 +90,9 @@
                 return fetchTodos(config);
             }
 
-            fetch();
+            onMounted(()=> {
+                fetch();
+            })
 
             watch([paginationParams, filters], () => fetch());
 

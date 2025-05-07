@@ -1,0 +1,27 @@
+{
+  "statusCards": [
+    {
+      "title": "active",
+      "id": "1"
+    },
+    {
+      "title": "inProgress",
+      "id": "2"
+    },
+    {
+      "title": "done",
+      "id": "3"
+    }
+  ],
+  "todos": [
+    {
+      "statusCardId": "2",
+      "status": "inProgress",
+      "id": "c9d5",
+      "title": "an active todo",
+      "dueDate": "2025-04-06T08:37:00.000Z",
+      "createdAt": "2025-04-06T08:38:15.586Z",
+      "updatedAt": "2025-04-06T08:38:15.586Z"
+    }
+  ]
+}

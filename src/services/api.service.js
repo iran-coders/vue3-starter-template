@@ -1,7 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
+import { urls } from "./apiUrls.service";
+import HttpMethod from "@/enums/HttpMethod";
 
-import HttpMethod from '@/enums/HttpMethod';
-
+const baseURL = urls.baseUrl;
 /**
  * @callback onFulfilledRequest
  * @param {AxiosRequestConfig} config
@@ -13,8 +14,9 @@ import HttpMethod from '@/enums/HttpMethod';
  */
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    timeout: import.meta.env.VITE_API_TIMEOUT
+    // baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL,
+    timeout: import.meta.env.VITE_API_TIMEOUT,
 });
 
 class ApiService {
@@ -66,13 +68,10 @@ class ApiService {
      * @returns {Number} Middleware id
      */
     static addResponseMiddleware(onFulfilled) {
-        return instance.interceptors.response.use(
-            onFulfilled,
-            function (error) {
-                onFulfilled(error.response);
-                return Promise.reject(error);
-            }
-        );
+        return instance.interceptors.response.use(onFulfilled, function (error) {
+            onFulfilled(error.response);
+            return Promise.reject(error);
+        });
     }
 
     /**

@@ -11,6 +11,7 @@
         </table>
 
         <VPagination
+            v-if="hasPagination"
             v-model="pageRef"
             v-model:size="itemsPerPageRef"
             :total="items.length"
@@ -57,6 +58,10 @@
                 type: Number,
                 default: 10
             },
+            hasPagination: {
+                type: Boolean,
+                default: true
+            },
             isLoading: {
                 type: Boolean,
                 default: false
@@ -73,10 +78,12 @@
             const itemsPerPageRef = useModelRef('itemsPerPage');
 
             const paginatedItems = computed(() => {
-                const start = (pageRef.value - 1) * itemsPerPageRef.value;
-                const end = pageRef.value * itemsPerPageRef.value;
+                if (props.hasPagination) {
+                    const start = (pageRef.value - 1) * itemsPerPageRef.value;
+                    const end = pageRef.value * itemsPerPageRef.value;
 
-                return props.items.slice(start, end);
+                    return props.items.slice(start, end);
+                } else return props.items;
             });
 
             return {
