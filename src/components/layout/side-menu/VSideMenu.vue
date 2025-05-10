@@ -24,19 +24,25 @@
 
                 {{ $t('Todos') }}
             </VSideMenuItem>
+            <VSideMenuItem :to="{ name: 'Comments' }">
+                <template #icon>
+                    <i class="bi-chat-dots-fill"></i>
+                </template>
+                {{ $t('Comments') }}
+            </VSideMenuItem>
         </nav>
     </aside>
 </template>
 
 <script>
-    // Components
-    import VSideMenuItem from '@/components/layout/side-menu/VSideMenuItem.vue';
+// Components
+import VSideMenuItem from '@/components/layout/side-menu/VSideMenuItem.vue';
 
-    export default {
-        name: 'VSideBar',
+export default {
+    name: 'VSideBar',
 
-        components: {
-            VSideMenuItem
-        }
+    components: {
+        VSideMenuItem
     }
+}
 </script>

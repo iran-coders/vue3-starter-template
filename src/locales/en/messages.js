@@ -4,6 +4,7 @@ export default {
     "Password": "Password",
     "Submit": "Submit",
     "Cancel": "Cancel",
+    "Comments": "Comments",
     "Dashboard": "Dashboard",
     "Users": "Users",
     "Authorization Error": "Authorization Error",

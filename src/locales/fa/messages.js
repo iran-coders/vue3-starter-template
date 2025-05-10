@@ -6,6 +6,7 @@ export default {
     "Cancel": "انصراف",
     "Dashboard": "داشبورد",
     "Users": "کاربران",
+    "Comments": "نظرات",
     "Authorization Error": "خطای دسترسی",
     "No data available": "داده\u200Cای موجود نیست",
     "You are successfully logged in": "شما با موفقیت وارد سیستم شدید",
