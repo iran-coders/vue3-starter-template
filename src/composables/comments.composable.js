@@ -15,7 +15,7 @@ export const useFetchComments = () => {
         startLoading();
         return CommentsService.getAll(config)
             .then((response) => {
-                comments.value = response.data;
+                comments.value = response.data.map(item=>({...item,status:"PENDING"}));
                 return response;
             })
             .finally(() => {
