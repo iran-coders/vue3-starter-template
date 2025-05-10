@@ -20,6 +20,8 @@ export default {
     "Email": "Email",
     "Loading": "Loading",
     "Previous": "Previous",
+    "SearchInputPlaceholder":'Search...',
+    "Text":"Text",
     "Next": "Next",
     "From": "From",
     "Size": "Size",
@@ -38,4 +40,6 @@ export default {
     "Dark": "Dark",
     "System": "System",
     "Settings": "Settings",
+    "Actions":"Actions",
+    "EmailPlaceholder":"Email"
 };

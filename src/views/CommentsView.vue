@@ -1,6 +1,6 @@
 <template>
-    <div>
         <div class="h3 mb-4">{{ $t('Comments') }}</div>
+        <CommentsFilterForm class="mb-4" v-model="filters"/>
         <VTableServer :items="comments" :itemsLength="comments.length" :is-loading="commentsIsLoading">
             <VColumn :header="$t('Id')" field="id" />
             <VColumn :header="$t('Name')" field="name" />
@@ -12,7 +12,7 @@
                     </button>
                 </template>
             </VColumn>
-            <VColumn :header="$t('Body')" field="body" />
+            <VColumn :header="$t('Text')" field="body" />
             <VColumn :header="$t('Status')" field="id">
                 <template #body="{ item }">
                     <span v-if="item.status==='PENDING'">
@@ -40,19 +40,27 @@
                 </template>
             </VColumn>
         </VTableServer>
-    </div>
 </template>
 
 <script>
+import CommentsFilterForm from '@/components/comments/CommentsFilterForm.vue';
 import VColumn from '@/components/data-table/VColumn.vue';
 import VTableServer from '@/components/data-table/VTableServer.vue';
 import { useFetchComments } from '@/composables/comments.composable';
+import { useApplyFilters } from '@/composables/filter.composable';
 import { watch } from 'vue';
 
 export default {
     name: 'CommentsView',
     setup() {
         const { comments, commentsIsLoading, fetchComments } = useFetchComments()
+
+         const filters = useApplyFilters({
+                querySearch: undefined,
+                status: undefined,
+                email: undefined
+            });
+
 
         function fetch() {
             const config = {}
@@ -64,12 +72,14 @@ export default {
        
         return {
             comments,
-            commentsIsLoading
+            commentsIsLoading,
+            filters
         }
     },
     components: {
         VTableServer,
-        VColumn
+        VColumn,
+        CommentsFilterForm
     }
 }
 </script>
