@@ -91,18 +91,13 @@ export default {
 
         const highlightText = (text) => {
             const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : undefined;
-            if (!query) return text;
             
-            const indexOfQuery = String(text).toLowerCase().indexOf(query);
-            if (indexOfQuery === -1) return text;
-
-            const originalText = String(text)
-            const prefix = originalText.slice(0, indexOfQuery);
-            const matchPart = originalText.slice(indexOfQuery, indexOfQuery + query.length);
-            const suffix = originalText.slice(indexOfQuery + query.length);
-            return `${prefix}<mark class="border">${matchPart}</mark>${suffix}`;
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return String(text).replace(regex, '<mark>$1</mark>');
 
         }
+        
         return {
             comments: filteredComments,
             commentsIsLoading,
