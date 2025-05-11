@@ -10,7 +10,6 @@
         >
             <div class="d-flex justify-content-between align-items-center">
                 <div class="toast-body" v-html="item.body"></div>
-
                 <button
                     v-if="item.clearable"
                     type="button"

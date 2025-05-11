@@ -15,7 +15,7 @@ export const useFetchComments = () => {
         startLoading();
         return CommentsService.getAll(config)
             .then((response) => {
-                comments.value = response.data.map(item=>({...item,status:"PENDING"}));
+                comments.value = response.data.map((item) => ({ ...item, status: "PENDING" }));
                 return response;
             })
             .finally(() => {
@@ -23,10 +23,21 @@ export const useFetchComments = () => {
             });
     };
 
+    const changeStatus = (id, status) => {
+        const updatedItemIndex = comments.value.findIndex((comment) => comment.id === id);
+        comments.value[updatedItemIndex].status = status;
+
+        // comments.value = comments.value.map((comment) => {
+        //     if (comment.id === id) return { ...comment, status };
+        //     else return comment;
+        // });
+    };
+
     return {
         comments,
         commentsIsLoading: isLoading,
         commentsKeyById,
         fetchComments,
+        changeStatus,
     };
 };

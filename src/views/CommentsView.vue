@@ -35,7 +35,7 @@
                     {{ $t("Confirmed") }}
                 </span>
                 <span v-if="item.status === 'REJECTED'">
-                    {{ $("Rejected") }}
+                    {{ $t("Rejected") }}
                 </span>
             </template>
         </VColumn>
@@ -45,7 +45,7 @@
                     <button class="btn btn-danger btn-sm" @click="handleRejectComment(item)">
                         <i class="bi-ban" />
                     </button>
-                    <button class="btn btn-success btn-sm z-3" data-bs-toggle="tooltip" data-bs-placement="top"
+                    <button class="btn btn-success btn-sm z-3" data-bs-toggle="tooltip" data-bs-placement="top" @click="handleConfirmComment(item.id)"
                         data-bs-title="Tooltip on top">
                         <i class="bi-check-circle" />
                     </button>
@@ -91,13 +91,17 @@ import VModal from "@/components/VModal.vue";
 import { useFetchComments } from "@/composables/comments.composable";
 import { useApplyFilters } from "@/composables/filter.composable";
 import useFetchPost from "@/composables/posts.composable";
+import { useToast } from "@/composables/toast.composable";
+import ThemeColor from "@/enums/ThemeColor";
 import StorageService from "@/services/storage.service";
 import { computed, reactive, ref, watch } from "vue";
 
 export default {
     name: "CommentsView",
     setup() {
-        const { comments, commentsIsLoading, fetchComments } = useFetchComments();
+        const {  showToast } = useToast()
+
+        const { comments, commentsIsLoading, fetchComments  , changeStatus: changeCommentStatus} = useFetchComments();
         fetchComments({});
 
         const { post, postIsLoading, fetchPost } = useFetchPost();
@@ -112,11 +116,14 @@ export default {
             rejectComment.comment = rejectedComment;
             rejectComment.modalIsOpen = true;
         };
+        const handleConfirmComment = (id)=>{
+            changeCommentStatus(id,'CONFIRMED')
+        }
 
         const handleFetchPost = async (id) => {
             try {
                 postModalIsOpen.value = true;
-                await fetchPost(id);
+                fetchPost(id).then(res => console.log("res", res)).catch(err => console.log("err", err));
             } catch {
                 postModalIsOpen.value = false;
             }
@@ -169,7 +176,8 @@ export default {
         };
 
         const handleConfirmRejection = () => {
-            // doing rejection here
+            changeCommentStatus(rejectComment.comment.id , "REJECTED")
+            showToast({ body: "undo", theme: ThemeColor.WARNING, title: "Deleting", duration: 3000 })
             rejectComment.comment = null
             rejectComment.modalIsOpen = false
         }
@@ -186,6 +194,7 @@ export default {
             handleRejectComment,
             handleConfirmRejection,
             rejectComment,
+            handleConfirmComment
         };
     },
     components: {
