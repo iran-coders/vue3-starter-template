@@ -29,7 +29,6 @@
 
     export default {
         name: 'VToasts',
-
         setup() {
             let items = installToast();
 

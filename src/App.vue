@@ -1,15 +1,17 @@
 <template>
     <RouterView />
-    <VToasts/>
+    <VToasts />
+    <CustomToast />
 </template>
 
 <script>
-    // Components
-    import VToasts from '@/components/VToasts.vue';
+// Components
+import VToasts from '@/components/VToasts.vue';
+import CustomToast from './components/comments/CustomToast.vue';
 
-    export default {
-        name: 'App',
+export default {
+    name: 'App',
 
-        components: { VToasts }
-    };
+    components: { VToasts, CustomToast }
+};
 </script>

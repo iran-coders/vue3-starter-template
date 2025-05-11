@@ -109,7 +109,7 @@ import VModal from "@/components/VModal.vue";
 import { useFetchComments } from "@/composables/comments.composable";
 import { useApplyFilters } from "@/composables/filter.composable";
 import useFetchPost from "@/composables/posts.composable";
-import { useToast } from "@/composables/toast.composable";
+import { useCustomToast } from "@/composables/customToast.composable";
 import ThemeColor from "@/enums/ThemeColor";
 import StorageService from "@/services/storage.service";
 import { computed, reactive, ref, watch } from "vue";
@@ -117,8 +117,7 @@ import { computed, reactive, ref, watch } from "vue";
 export default {
     name: "CommentsView",
     setup() {
-        const { showToast } = useToast();
-
+        const { showToast } = useCustomToast();
         const { comments, commentsIsLoading, fetchComments, changeStatus: changeCommentStatus } = useFetchComments();
         fetchComments({});
 
@@ -194,22 +193,27 @@ export default {
             const regex = new RegExp(`(${query})`, "gi");
             return String(text).replace(regex, "<mark>$1</mark>");
         };
+        const handleUndoRejection = () => {
+            console.log("Undo rejection callback executed");
+        };
+
         const handleConfirmRejection = () => {
-            changeCommentStatus(rejectComment.comment.id, "REJECTED");
-            showToast({ body: "Undo", theme: ThemeColor.WARNING, duration: 3000 });
-            rejectComment.comment = null;
+            showToast({
+            theme: ThemeColor.WARNING,
+            duration: 3000,
+            callback: handleUndoRejection,
+            });
             rejectComment.modalIsOpen = false;
+            rejectComment.comment = null;
         };
 
         const selectedRows = ref([]);
-
         const handleStatusChangeAll = (status) => {
             selectedRows.value.forEach((commentId) => {
                 changeCommentStatus(commentId, status);
                 selectedRows.value = [];
             });
         };
-
         return {
             comments: filteredComments,
             commentsIsLoading,
