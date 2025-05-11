@@ -14,8 +14,9 @@
         </VColumn>
         <VColumn :header="$t('Email')" field="email" />
         <VColumn :header="$t('Post')" field="postId">
-            <template #body>
-                <button class="btn btn-sm btn-outline-info" title="View Related Post">
+            <template #body="{ item }">
+                <button class="btn btn-sm btn-outline-info" title="View Related Post"
+                    @click="handleFetchPost(item.postId)">
                     <i class="bi-eye" />
                 </button>
             </template>
@@ -52,22 +53,45 @@
             </template>
         </VColumn>
     </VTableServer>
+    <VModal v-model="postModalIsOpen">
+        <div v-if="postIsLoading">
+            Loading...
+        </div>
+        <h1 v-if="!postIsLoading && post !== null">
+            {{ post.title }}
+        </h1>
+    </VModal>
 </template>
 
 <script>
 import CommentsFilterForm from '@/components/comments/CommentsFilterForm.vue';
 import VColumn from '@/components/data-table/VColumn.vue';
 import VTableServer from '@/components/data-table/VTableServer.vue';
+import VModal from '@/components/VModal.vue';
 import { useFetchComments } from '@/composables/comments.composable';
 import { useApplyFilters } from '@/composables/filter.composable';
-import { computed } from 'vue';
+import useFetchPost from '@/composables/posts.composable';
+import { computed, ref } from 'vue';
 
 export default {
     name: 'CommentsView',
     setup() {
         const { comments, commentsIsLoading, fetchComments } = useFetchComments()
-
         fetchComments({})
+
+        const { post, postIsLoading, fetchPost } = useFetchPost()
+        const postModalIsOpen = ref(false)
+
+        const handleFetchPost = async (id) => {
+            try {
+                postModalIsOpen.value = true
+                await fetchPost(id)
+            } catch {
+                postModalIsOpen.value = false
+            }
+
+
+        }
 
         const filters = useApplyFilters({
             searchQuery: undefined,
@@ -91,24 +115,29 @@ export default {
 
         const highlightText = (text) => {
             const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : undefined;
-            
+
             if (!query) return text;
             const regex = new RegExp(`(${query})`, 'gi');
             return String(text).replace(regex, '<mark>$1</mark>');
 
         }
-        
+
         return {
             comments: filteredComments,
             commentsIsLoading,
             filters,
-            highlightText
+            highlightText,
+            post,
+            postIsLoading,
+            handleFetchPost,
+            postModalIsOpen
         }
     },
     components: {
         VTableServer,
         VColumn,
-        CommentsFilterForm
+        CommentsFilterForm,
+        VModal
     }
 }
 </script>
