@@ -1,5 +1,5 @@
 <template>
-    <div class="h3 mb-4">{{ $t('Comments') }}</div>
+    <div class="h3 mb-4">{{ $t("Comments") }}</div>
     <CommentsFilterForm class="mb-4" v-model="filters" />
     <VTableServer :items="comments" :itemsLength="comments.length" :is-loading="commentsIsLoading">
         <VColumn :header="$t('Id')" field="id">
@@ -29,13 +29,13 @@
         <VColumn :header="$t('Status')" field="id">
             <template #body="{ item }">
                 <span v-if="item.status === 'PENDING'">
-                    {{ $t('Pending') }}
+                    {{ $t("Pending") }}
                 </span>
                 <span v-if="item.status === 'CONFIRMED'">
-                    {{ $t('Confirmed') }}
+                    {{ $t("Confirmed") }}
                 </span>
                 <span v-if="item.status === 'REJECTED'">
-                    {{ $('Rejected') }}
+                    {{ $("Rejected") }}
                 </span>
             </template>
         </VColumn>
@@ -54,9 +54,7 @@
         </VColumn>
     </VTableServer>
     <VModal v-model="postModalIsOpen">
-        <div v-if="postIsLoading">
-            Loading...
-        </div>
+        <div v-if="postIsLoading">Loading...</div>
         <h1 v-if="!postIsLoading && post !== null">
             {{ post.title }}
         </h1>
@@ -64,50 +62,62 @@
 </template>
 
 <script>
-import CommentsFilterForm from '@/components/comments/CommentsFilterForm.vue';
-import VColumn from '@/components/data-table/VColumn.vue';
-import VTableServer from '@/components/data-table/VTableServer.vue';
-import VModal from '@/components/VModal.vue';
-import { useFetchComments } from '@/composables/comments.composable';
-import { useApplyFilters } from '@/composables/filter.composable';
-import useFetchPost from '@/composables/posts.composable';
-import { computed, ref } from 'vue';
+import CommentsFilterForm from "@/components/comments/CommentsFilterForm.vue";
+import VColumn from "@/components/data-table/VColumn.vue";
+import VTableServer from "@/components/data-table/VTableServer.vue";
+import VModal from "@/components/VModal.vue";
+import { useFetchComments } from "@/composables/comments.composable";
+import { useApplyFilters } from "@/composables/filter.composable";
+import useFetchPost from "@/composables/posts.composable";
+import StorageService from "@/services/storage.service";
+import { computed, ref, watch } from "vue";
 
 export default {
-    name: 'CommentsView',
+    name: "CommentsView",
     setup() {
-        const { comments, commentsIsLoading, fetchComments } = useFetchComments()
-        fetchComments({})
+        const { comments, commentsIsLoading, fetchComments } = useFetchComments();
+        fetchComments({});
 
-        const { post, postIsLoading, fetchPost } = useFetchPost()
-        const postModalIsOpen = ref(false)
-
+        const { post, postIsLoading, fetchPost } = useFetchPost();
+        const postModalIsOpen = ref(false);
         const handleFetchPost = async (id) => {
             try {
-                postModalIsOpen.value = true
-                await fetchPost(id)
+                postModalIsOpen.value = true;
+                await fetchPost(id);
             } catch {
-                postModalIsOpen.value = false
+                postModalIsOpen.value = false;
             }
+        };
 
-
-        }
+        const syncedFilters = StorageService.get("synced-filters");
 
         const filters = useApplyFilters({
-            searchQuery: undefined,
-            status: undefined,
-            email: undefined
+            searchQuery: syncedFilters?.searchQuery || undefined,
+            status: syncedFilters?.status || undefined,
+            email: syncedFilters?.email || undefined,
+        });
+
+        watch(filters, (newFilters) => {
+            StorageService.set('synced-filters',{...filters,...newFilters})
+        }, { immediate: true })
+
+        StorageService.observe("synced-filters", (newValue) => {
+            filters.searchQuery = newValue?.searchQuery || undefined;
+            filters.email = newValue?.email || undefined;
+            filters.status = newValue?.status || undefined
         });
 
         const filteredComments = computed(() => {
             const enteredEmail = filters?.email && filters.email.trim().toLowerCase();
-            const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : filters.searchQuery;
+            const query =
+                filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : filters.searchQuery;
             const status = filters?.status && filters.status.trim();
 
-            const matchesEmail = (email) => enteredEmail && email.trim().toLowerCase().includes(enteredEmail)
-            const matchesQuery = (id, body, name) => id === Number(query) || body.trim().toLowerCase().includes(query) || name.trim().toLowerCase().includes(query)
+            const matchesEmail = (email) => enteredEmail && email.trim().toLowerCase().includes(enteredEmail);
+            const matchesQuery = (id, body, name) =>
+                id === Number(query) || body.trim().toLowerCase().includes(query) || name.trim().toLowerCase().includes(query);
 
-            return comments.value?.filter(comment => {
+            return comments.value?.filter((comment) => {
                 if (!query && !enteredEmail && !status) return true;
                 return matchesEmail(comment.email) || matchesQuery(comment.id, comment.body, comment.name) || status === comment.status;
             });
@@ -117,10 +127,9 @@ export default {
             const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : undefined;
 
             if (!query) return text;
-            const regex = new RegExp(`(${query})`, 'gi');
-            return String(text).replace(regex, '<mark>$1</mark>');
-
-        }
+            const regex = new RegExp(`(${query})`, "gi");
+            return String(text).replace(regex, "<mark>$1</mark>");
+        };
 
         return {
             comments: filteredComments,
@@ -130,14 +139,14 @@ export default {
             post,
             postIsLoading,
             handleFetchPost,
-            postModalIsOpen
-        }
+            postModalIsOpen,
+        };
     },
     components: {
         VTableServer,
         VColumn,
         CommentsFilterForm,
-        VModal
-    }
-}
+        VModal,
+    },
+};
 </script>

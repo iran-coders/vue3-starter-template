@@ -41,6 +41,14 @@ class StorageService {
     static has(name) {
         return Boolean(this.get(name));
     }
+
+    static observe(eventKey , callback){
+        window.addEventListener('storage',(event)=>{
+            if(event.key === eventKey && event.newValue !==null) {
+                callback(JSON.parse(event.newValue))
+            }
+        })
+    }
 }
 
 export default StorageService;

@@ -8,7 +8,7 @@ export default function useFetchPost() {
 
     const post = ref(null);
 
-    function fetchPost(id) {
+    async function fetchPost (id) {
         const cachedPosts = StorageService.get("cached-posts") || {};
 
         if (cachedPosts[`post-${id}`]) {
