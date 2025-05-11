@@ -10,9 +10,14 @@ export default function useFetchPost() {
 
     function fetchPost(id) {
         const cachedPosts = StorageService.get("cached-posts") || {};
-        if (cachedPosts[`post-${id}`]) return cachedPosts[`post-${id}`];
-        startLoading();
-        return PostsServices.getOneById(id)
+
+        if (cachedPosts[`post-${id}`]) {
+            post.value = cachedPosts[`post-${id}`];
+            return
+        }
+        else{
+            startLoading();
+            return PostsServices.getOneById(id)
             .then((response) => {
                 post.value = response.data;
                 StorageService.set('cached-posts', { ...cachedPosts, [`post-${id}`]: response.data })
@@ -21,6 +26,7 @@ export default function useFetchPost() {
             .finally(() => {
                 endLoading();
             });
+        }
     }
 
     return {

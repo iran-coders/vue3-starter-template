@@ -43,4 +43,5 @@ export default {
     Settings: "تنظیمات",
     Actions: "عملیات",
     EmailPlaceholder: "Email",
+    "Confirmed":"تایید شده"
 };

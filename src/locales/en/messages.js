@@ -41,5 +41,7 @@ export default {
     "System": "System",
     "Settings": "Settings",
     "Actions":"Actions",
-    "EmailPlaceholder":"Email"
+    "EmailPlaceholder":"Email",
+    "Post":"Post",
+    "Confirmed":"Confirmed"
 };
