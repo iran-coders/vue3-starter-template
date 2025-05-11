@@ -1,7 +1,29 @@
 <template>
     <div class="h3 mb-4">{{ $t("Comments") }}</div>
-    <CommentsFilterForm class="mb-4" v-model="filters" />
+    <div class="d-flex align-items-center mb-4">
+        <CommentsFilterForm class="flex-grow-1" v-model="filters" />
+        <div class="d-flex gap-2">
+            <button class="btn btn-success" :disabled="selectedRows.length == 0" @click="handleStatusChangeAll('CONFIRMED')">
+                {{ $t("ConfirmAll") }}
+            </button>
+            <button class="btn btn-danger" :disabled="selectedRows.length == 0" @click="handleStatusChangeAll('REJECTED')">
+                {{ $t("RejectAll") }}
+            </button>
+        </div>
+    </div>
     <VTableServer :items="comments" :itemsLength="comments.length" :is-loading="commentsIsLoading">
+        <VColumn :header="'Select'" field="id">
+            <template #body="{ item }">
+                <input
+                    type="checkbox"
+                    class="form-check-input"
+                    :checked="selectedRows.includes(item.id)"
+                    v-model="selectedRows"
+                    :value="item.id"
+                    :id="item.id"
+                />
+            </template>
+        </VColumn>
         <VColumn :header="$t('Id')" field="id">
             <template #body="{ item }">
                 <span v-html="highlightText(item.id)" />
@@ -15,8 +37,7 @@
         <VColumn :header="$t('Email')" field="email" />
         <VColumn :header="$t('Post')" field="postId">
             <template #body="{ item }">
-                <button class="btn btn-sm btn-outline-info" title="View Related Post"
-                    @click="handleFetchPost(item.postId)">
+                <button class="btn btn-sm btn-outline-info" title="View Related Post" @click="handleFetchPost(item.postId)">
                     <i class="bi-eye" />
                 </button>
             </template>
@@ -45,8 +66,13 @@
                     <button class="btn btn-danger btn-sm" @click="handleRejectComment(item)">
                         <i class="bi-ban" />
                     </button>
-                    <button class="btn btn-success btn-sm z-3" data-bs-toggle="tooltip" data-bs-placement="top" @click="handleConfirmComment(item.id)"
-                        data-bs-title="Tooltip on top">
+                    <button
+                        class="btn btn-success btn-sm z-3"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        @click="handleConfirmComment(item.id)"
+                        data-bs-title="Tooltip on top"
+                    >
                         <i class="bi-check-circle" />
                     </button>
                 </div>
@@ -65,20 +91,12 @@
         </template>
         <div>
             <h3 class="text-danger">Attention</h3>
-            <p>
-                Changed Data can not be restored
-            </p>
-            <div>
-                Post with id ({{ rejectComment?.comment?.id }}) will be rejected!!
-            </div>
+            <p>Changed Data can not be restored</p>
+            <div>Post with id ({{ rejectComment?.comment?.id }}) will be rejected!!</div>
         </div>
         <template v-slot:footer>
-            <button class="btn btn-danger" @click="handleConfirmRejection($refs.modal.hide)">
-                Yes
-            </button>
-            <button class="btn btn-secondary" @click="$refs.modal.hide()">
-                Cancel
-            </button>
+            <button class="btn btn-danger" @click="handleConfirmRejection($refs.modal.hide)">Yes</button>
+            <button class="btn btn-secondary" @click="$refs.modal.hide()">Cancel</button>
         </template>
     </VModal>
 </template>
@@ -99,9 +117,9 @@ import { computed, reactive, ref, watch } from "vue";
 export default {
     name: "CommentsView",
     setup() {
-        const {  showToast } = useToast()
+        const { showToast } = useToast();
 
-        const { comments, commentsIsLoading, fetchComments  , changeStatus: changeCommentStatus} = useFetchComments();
+        const { comments, commentsIsLoading, fetchComments, changeStatus: changeCommentStatus } = useFetchComments();
         fetchComments({});
 
         const { post, postIsLoading, fetchPost } = useFetchPost();
@@ -116,14 +134,16 @@ export default {
             rejectComment.comment = rejectedComment;
             rejectComment.modalIsOpen = true;
         };
-        const handleConfirmComment = (id)=>{
-            changeCommentStatus(id,'CONFIRMED')
-        }
+        const handleConfirmComment = (id) => {
+            changeCommentStatus(id, "CONFIRMED");
+        };
 
         const handleFetchPost = async (id) => {
             try {
                 postModalIsOpen.value = true;
-                fetchPost(id).then(res => console.log("res", res)).catch(err => console.log("err", err));
+                fetchPost(id)
+                    .then((res) => console.log("res", res))
+                    .catch((err) => console.log("err", err));
             } catch {
                 postModalIsOpen.value = false;
             }
@@ -174,13 +194,21 @@ export default {
             const regex = new RegExp(`(${query})`, "gi");
             return String(text).replace(regex, "<mark>$1</mark>");
         };
-
         const handleConfirmRejection = () => {
-            changeCommentStatus(rejectComment.comment.id , "REJECTED")
-            showToast({ body: "undo", theme: ThemeColor.WARNING, title: "Deleting", duration: 3000 })
-            rejectComment.comment = null
-            rejectComment.modalIsOpen = false
-        }
+            changeCommentStatus(rejectComment.comment.id, "REJECTED");
+            showToast({ body: "Undo", theme: ThemeColor.WARNING, duration: 3000 });
+            rejectComment.comment = null;
+            rejectComment.modalIsOpen = false;
+        };
+
+        const selectedRows = ref([]);
+
+        const handleStatusChangeAll = (status) => {
+            selectedRows.value.forEach((commentId) => {
+                changeCommentStatus(commentId, status);
+                selectedRows.value = [];
+            });
+        };
 
         return {
             comments: filteredComments,
@@ -194,7 +222,9 @@ export default {
             handleRejectComment,
             handleConfirmRejection,
             rejectComment,
-            handleConfirmComment
+            handleConfirmComment,
+            selectedRows,
+            handleStatusChangeAll,
         };
     },
     components: {

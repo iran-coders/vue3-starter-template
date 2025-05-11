@@ -8,6 +8,7 @@
             aria-live="assertive"
             aria-atomic="true"
         >
+            <div class="toast-header" v-html="item.title" v-if="!!item.title"></div>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="toast-body" v-html="item.body"></div>
                 <button

@@ -43,5 +43,6 @@ export default {
     "Actions":"Actions",
     "EmailPlaceholder":"Email",
     "Post":"Post",
-    "Confirmed":"Confirmed"
+    "RejectAll":"Reject All",
+    "ConfirmAll":"Confirm All"
 };
