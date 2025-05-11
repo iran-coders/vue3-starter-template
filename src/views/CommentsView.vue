@@ -2,8 +2,16 @@
     <div class="h3 mb-4">{{ $t('Comments') }}</div>
     <CommentsFilterForm class="mb-4" v-model="filters" />
     <VTableServer :items="comments" :itemsLength="comments.length" :is-loading="commentsIsLoading">
-        <VColumn :header="$t('Id')" field="id" />
-        <VColumn :header="$t('Name')" field="name" />
+        <VColumn :header="$t('Id')" field="id">
+            <template #body="{ item }">
+                <span v-html="highlightText(item.id)" />
+            </template>
+        </VColumn>
+        <VColumn :header="$t('Name')" field="name">
+            <template #body="{ item }">
+                <span v-html="highlightText(item.name)" />
+            </template>
+        </VColumn>
         <VColumn :header="$t('Email')" field="email" />
         <VColumn :header="$t('Post')" field="postId">
             <template #body>
@@ -12,7 +20,11 @@
                 </button>
             </template>
         </VColumn>
-        <VColumn :header="$t('Text')" field="body" />
+        <VColumn :header="$t('Text')" field="body">
+            <template #body="{ item }">
+                <span v-html="highlightText(item.body)" />
+            </template>
+        </VColumn>
         <VColumn :header="$t('Status')" field="id">
             <template #body="{ item }">
                 <span v-if="item.status === 'PENDING'">
@@ -65,23 +77,37 @@ export default {
 
         const filteredComments = computed(() => {
             const enteredEmail = filters?.email && filters.email.trim().toLowerCase();
-            const query = filters?.searchQuery && isNaN(Number(filters.querySearch)) ? filters.searchQuery.trim().toLowerCase() : undefined;
+            const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : filters.searchQuery;
             const status = filters?.status && filters.status.trim();
 
             const matchesEmail = (email) => enteredEmail && email.trim().toLowerCase().includes(enteredEmail)
-            const matchesQuery = (id,body,name)=> id=== Number(query) || body.trim().toLowerCase().includes(query) || name.trim().toLowerCase().includes(query)
+            const matchesQuery = (id, body, name) => id === Number(query) || body.trim().toLowerCase().includes(query) || name.trim().toLowerCase().includes(query)
 
             return comments.value?.filter(comment => {
-                if(!query && !enteredEmail && !status) return true;
+                if (!query && !enteredEmail && !status) return true;
                 return matchesEmail(comment.email) || matchesQuery(comment.id, comment.body, comment.name) || status === comment.status;
             });
         });
 
+        const highlightText = (text) => {
+            const query = filters?.searchQuery && isNaN(Number(filters.searchQuery)) ? filters.searchQuery.trim().toLowerCase() : undefined;
+            if (!query) return text;
+            
+            const indexOfQuery = String(text).toLowerCase().indexOf(query);
+            if (indexOfQuery === -1) return text;
 
+            const originalText = String(text)
+            const prefix = originalText.slice(0, indexOfQuery);
+            const matchPart = originalText.slice(indexOfQuery, indexOfQuery + query.length);
+            const suffix = originalText.slice(indexOfQuery + query.length);
+            return `${prefix}<mark class="border">${matchPart}</mark>${suffix}`;
+
+        }
         return {
             comments: filteredComments,
             commentsIsLoading,
-            filters
+            filters,
+            highlightText
         }
     },
     components: {
