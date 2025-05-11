@@ -40,9 +40,9 @@
             </template>
         </VColumn>
         <VColumn :header="$t('Actions')" field="id">
-            <template #body>
+            <template #body="{ item }">
                 <div class="d-flex gap-2">
-                    <button class="btn btn-danger btn-sm">
+                    <button class="btn btn-danger btn-sm" @click="handleRejectComment(item)">
                         <i class="bi-ban" />
                     </button>
                     <button class="btn btn-success btn-sm z-3" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -59,6 +59,28 @@
             {{ post.title }}
         </h1>
     </VModal>
+    <VModal v-model="rejectComment.modalIsOpen" ref="modal">
+        <template v-slot:header>
+            <h1 class="h6">Are you sure?</h1>
+        </template>
+        <div>
+            <h3 class="text-danger">Attention</h3>
+            <p>
+                Changed Data can not be restored
+            </p>
+            <div>
+                Post with id ({{ rejectComment?.comment?.id }}) will be rejected!!
+            </div>
+        </div>
+        <template v-slot:footer>
+            <button class="btn btn-danger" @click="handleConfirmRejection($refs.modal.hide)">
+                Yes
+            </button>
+            <button class="btn btn-secondary" @click="$refs.modal.hide()">
+                Cancel
+            </button>
+        </template>
+    </VModal>
 </template>
 
 <script>
@@ -70,7 +92,7 @@ import { useFetchComments } from "@/composables/comments.composable";
 import { useApplyFilters } from "@/composables/filter.composable";
 import useFetchPost from "@/composables/posts.composable";
 import StorageService from "@/services/storage.service";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 
 export default {
     name: "CommentsView",
@@ -80,6 +102,17 @@ export default {
 
         const { post, postIsLoading, fetchPost } = useFetchPost();
         const postModalIsOpen = ref(false);
+
+        const rejectComment = reactive({
+            comment: null,
+            modalIsOpen: false,
+        });
+
+        const handleRejectComment = (rejectedComment) => {
+            rejectComment.comment = rejectedComment;
+            rejectComment.modalIsOpen = true;
+        };
+
         const handleFetchPost = async (id) => {
             try {
                 postModalIsOpen.value = true;
@@ -97,14 +130,18 @@ export default {
             email: syncedFilters?.email || undefined,
         });
 
-        watch(filters, (newFilters) => {
-            StorageService.set('synced-filters',{...filters,...newFilters})
-        }, { immediate: true })
+        watch(
+            filters,
+            (newFilters) => {
+                StorageService.set("synced-filters", { ...filters, ...newFilters });
+            },
+            { immediate: true }
+        );
 
         StorageService.observe("synced-filters", (newValue) => {
             filters.searchQuery = newValue?.searchQuery || undefined;
             filters.email = newValue?.email || undefined;
-            filters.status = newValue?.status || undefined
+            filters.status = newValue?.status || undefined;
         });
 
         const filteredComments = computed(() => {
@@ -131,6 +168,12 @@ export default {
             return String(text).replace(regex, "<mark>$1</mark>");
         };
 
+        const handleConfirmRejection = () => {
+            // doing rejection here
+            rejectComment.comment = null
+            rejectComment.modalIsOpen = false
+        }
+
         return {
             comments: filteredComments,
             commentsIsLoading,
@@ -140,6 +183,9 @@ export default {
             postIsLoading,
             handleFetchPost,
             postModalIsOpen,
+            handleRejectComment,
+            handleConfirmRejection,
+            rejectComment,
         };
     },
     components: {
