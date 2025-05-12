@@ -62,8 +62,8 @@
         </VColumn>
         <VColumn :header="$t('Actions')" field="id">
             <template #body="{ item }">
-                <div class="d-flex gap-2">
-                    <button class="btn btn-danger btn-sm" @click="handleRejectComment(item)">
+                <div class="d-flex gap-2 justify-content-center ">
+                    <button class="btn btn-danger btn-sm" v-if="item.status !== 'REJECTED'" @click="handleRejectComment(item)">
                         <i class="bi-ban" />
                     </button>
                     <button
@@ -193,15 +193,20 @@ export default {
             const regex = new RegExp(`(${query})`, "gi");
             return String(text).replace(regex, "<mark>$1</mark>");
         };
-        const handleUndoRejection = () => {
-            console.log("Undo rejection callback executed");
-        };
 
         const handleConfirmRejection = () => {
+            const previousCommentState = {...rejectComment.comment};
+            console.log(previousCommentState);
+
+            changeCommentStatus(rejectComment.comment.id,'REJECTED')
+
             showToast({
             theme: ThemeColor.WARNING,
             duration: 3000,
-            callback: handleUndoRejection,
+            callback:()=>{
+                console.log('hi');
+                changeCommentStatus(previousCommentState.id, previousCommentState.status)
+            }
             });
             rejectComment.modalIsOpen = false;
             rejectComment.comment = null;

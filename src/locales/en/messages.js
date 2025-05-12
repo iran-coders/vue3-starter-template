@@ -44,5 +44,6 @@ export default {
     "EmailPlaceholder":"Email",
     "Post":"Post",
     "RejectAll":"Reject All",
-    "ConfirmAll":"Confirm All"
+    "ConfirmAll":"Confirm All",
+    "Confirmed":"Confirmed"
 };
