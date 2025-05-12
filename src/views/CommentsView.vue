@@ -3,10 +3,10 @@
     <div class="d-flex align-items-center mb-4">
         <CommentsFilterForm class="flex-grow-1" v-model="filters" />
         <div class="d-flex gap-2">
-            <button class="btn btn-success" :disabled="selectedRows.length == 0" @click="handleStatusChangeAll('CONFIRMED')">
-                {{ $t("ConfirmAll") }}
+            <button class="btn btn-success" :disabled="!hasSelectedRows" @click="handleStatusChangeAll('CONFIRMED')">
+                {{ `${$t("ConfirmAll")} ${hasSelectedRows ? selectedRowsAmount : ""}` }}
             </button>
-            <button class="btn btn-danger" :disabled="selectedRows.length == 0" @click="handleStatusChangeAll('REJECTED')">
+            <button class="btn btn-danger" :disabled="!hasSelectedRows" @click="handleStatusChangeAll('REJECTED')">
                 {{ $t("RejectAll") }}
             </button>
         </div>
@@ -213,6 +213,9 @@ export default {
         };
 
         const selectedRows = ref([]);
+        const selectedRowsAmount = computed(()=> selectedRows.value.length)
+        const hasSelectedRows = computed(()=>selectedRows.value.length > 0)
+
         const handleStatusChangeAll = (status) => {
             selectedRows.value.forEach((commentId) => {
                 changeCommentStatus(commentId, status);
@@ -233,6 +236,8 @@ export default {
             rejectComment,
             handleConfirmComment,
             selectedRows,
+            selectedRowsAmount,
+            hasSelectedRows,
             handleStatusChangeAll,
         };
     },
