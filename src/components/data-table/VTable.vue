@@ -1,7 +1,7 @@
 <template>
     <div class="border border-2 rounded-2 overflow-hidden position-relative bg-body">
         <table class="table mb-0">
-            <VTableHeader :columns="columns"/>
+            <VTableHeader :columns="columns" :class="{ 'd-none': isMobile }"/>
             <VTableBody
                 :columns="columns"
                 :row-slot="rowSlot"
@@ -26,6 +26,9 @@
 
 <script>
     import { computed } from 'vue';
+
+    // Utils
+    import Breakpoints from '@/utils/breakpoints';
 
     // Components
     import VTableHeader from '@/components/data-table/VTableHeader.vue';
@@ -66,6 +69,8 @@
         emits: ['update:page', 'update:itemsPerPage'],
 
         setup(props, context) {
+            const isMobile = Breakpoints.down(Breakpoints.SM);
+
             const rowSlot = computed(() => context.slots.row);
             const columns = computed(() => context.slots.default());
 
@@ -82,6 +87,8 @@
             return {
                 rowSlot,
                 columns,
+
+                isMobile,
 
                 pageRef,
                 itemsPerPageRef,

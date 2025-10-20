@@ -16,6 +16,7 @@
                 :columns="renderColumns(item, rowIndex)"
                 :item="item"
                 :rowIndex="rowIndex"
+                :class="{ 'border-bottom': isMobile }"
             />
         </template>
 
@@ -23,6 +24,7 @@
             <tr
                 v-for="(item, rowIndex) of items"
                 :key="rowIndex"
+                :class="{ 'border-bottom': isMobile }"
             >
                 <component
                     :is="column"
@@ -39,6 +41,7 @@
 
     // Utils
     import { hasVNodeSlot } from '@/utils/vue';
+    import Breakpoints from '@/utils/breakpoints';
 
     export default {
         name: 'VTableBody',
@@ -62,15 +65,42 @@
         },
 
         setup(props) {
+            const isMobile = Breakpoints.down(Breakpoints.SM);
 
             function renderColumns(item, rowIndex) {
                 return props.columns.map(function (column) {
                     let content;
+                    let title;
 
                     if (hasVNodeSlot(column, 'body')) {
                         content = h(column.children.body, { field: column.props.field, item, rowIndex });
                     } else {
                         content = resolveField(column, item);
+                    }
+
+                    if (hasVNodeSlot(column, 'header') && isMobile) {
+                        title = h(column.children.header, { field: column.props.field, item, rowIndex });
+                    } else if (isMobile){
+                        title = column.props.header;
+                    }
+
+                    if (isMobile) {
+                        return h(
+                            "td",
+                            { class: "d-flex justify-content-between align-items-center border-bottom-0" },
+                            [
+                                h(
+                                "div",
+                                { class: "fs-3 bg-transparent fw-medium" },
+                                title
+                                ),
+                                h(
+                                "div",
+                                { class: "fs-3 bg-transparent" },
+                                content
+                                )
+                            ]
+                        );
                     }
 
                     return h(
@@ -94,7 +124,9 @@
             }
 
             return {
-                renderColumns
+                renderColumns,
+
+                isMobile
             };
         }
     };
