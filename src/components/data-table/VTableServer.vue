@@ -1,7 +1,10 @@
 <template>
     <div class="border border-2 rounded-2 overflow-hidden position-relative bg-body">
         <table class="table mb-0">
-            <VTableHeader :columns="columns" :class="{ 'd-none': isMobile }"/>
+            <VTableHeader
+                v-if="isMobile === false"
+                :columns="columns"
+            />
 
             <VTableBody
                 :columns="columns"
